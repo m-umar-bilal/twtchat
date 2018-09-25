@@ -2,6 +2,7 @@ import {Component} from '@angular/core';
 import {IonicPage, NavController, NavParams} from 'ionic-angular';
 import {TabsPage} from "../tabs/tabs";
 import {RestService, ToastAlertsService} from "../../services";
+import * as CryptoJS from 'crypto-js';
 
 /**
  * Generated class for the SignupEmailPage page.
@@ -36,7 +37,10 @@ export class SignupEmailPage {
             let toast = this.toastsAlertService.createToast(res.error_message);
             toast.present();
           } else {
-            localStorage.setItem('currentUser', JSON.stringify({res, ...this.user}));
+            localStorage.setItem('currentUser', JSON.stringify({
+              res, ...this.user,
+              password: encodeURIComponent(CryptoJS.MD5(this.user.password))
+            }));
             localStorage.setItem('active', 'show');
             this.navCtrl.push(TabsPage);
           }

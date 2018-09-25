@@ -9,9 +9,9 @@ import { Injectable } from '@angular/core';
 @Injectable()
 export class AWSS3Service {
 
-  public bucketId = 'testcompliantstaffing';
-  public accessKeyId = 'AKIAJL6QB6WKT3XIXQGA';
-  public secretAccessKey = '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';
+  public bucketId = '';
+  public accessKeyId = '';
+  public secretAccessKey = '';
   public bucket: any;
   public cache: any = {};
 

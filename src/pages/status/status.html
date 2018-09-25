@@ -18,10 +18,11 @@
     <ion-list>
         <ion-item (click)="mystatus()">
             <ion-thumbnail item-start>
-          <img class="img" src="../../assets/imgs/880.png" width="200px" />
+              <img  [src]="serverURL+currentUser?.photoProfil||'../../assets/imgs/880.png'"  width="200px" />
+
           </ion-thumbnail>
-          <h2>My Status</h2>
-          <p style="margin-top: 10px;">7 hours ago</p>
+          <h2>{{currentUser?.status_text}}</h2>
+          <!--<p style="margin-top: 10px;">7 hours ago</p>-->
           <ion-icon name="arrow-forward" item-end></ion-icon>
         </ion-item>
     </ion-list>

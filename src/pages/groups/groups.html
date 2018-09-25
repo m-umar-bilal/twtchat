@@ -17,46 +17,38 @@
 
     <ion-list style="margin: 0;padding: 0;list-style-type: none;">
         <ion-icon class="bar" name="contacts" item-start> PUBLIC GROUPS</ion-icon>
-        <ion-item>
+      <div *ngFor="let group of this.svc.userData.groups">
+
+      <ion-item *ngIf="group.private==='0'" >
             <ion-thumbnail item-start>
-          <img src="../../assets/imgs/880.png" width="200px" />
+          <img [src]="serverURL+group?.directory+group?.photo_url||'../../assets/imgs/880.png'" width="200px" />
           </ion-thumbnail>
-          <h2 class="center">FAISAL</h2>
-          <p style="margin-top: 10px;">Photo</p>
-          <p item-end style="margin-top: -30px">2018/30/10</p>
+          <h2 class="center">{{group?.name}}</h2>
+          <p style="margin-top: 10px;">{{group?.messages[group.messages.length-1]?.message}}</p>
+          <p item-end style="margin-top: -30px">{{group?.date_lastMessage| timeAgo}}</p>
         </ion-item>
-  
-        <ion-item>
-            <ion-thumbnail item-start>
-          <img src="../../assets/imgs/880.png" width="200px" />
-          </ion-thumbnail>
-          <h2 class="center">FAISAL</h2>
-          <p style="margin-top: 10px;">Hello</p>
-          <p item-end style="margin-top: -30px">2018/30/10</p>
-        </ion-item>
-  
+      </div>
+
+
+
     </ion-list>
 
     <ion-list>
         <ion-icon class="bar" name="lock" item-start> PRIVATE GROUPS</ion-icon>
-        <ion-item>
-            <ion-thumbnail item-start>
-          <img src="../../assets/imgs/880.png" width="200px" />
+      <div *ngFor="let group of this.svc.userData.groups">
+
+        <ion-item *ngIf="group.private==='1'" >
+          <ion-thumbnail item-start>
+            <img [src]="serverURL+group?.directory+group?.photo_url||'../../assets/imgs/880.png'" width="200px" />
           </ion-thumbnail>
-          <h2 class="center">FAISAL</h2>
-          <p style="margin-top: 10px;">Photo</p>
-          <p item-end style="margin-top: -30px">2018/30/10</p>
+          <h2 class="center">{{group?.name}}</h2>
+          <p *ngIf="group?.messages" style="margin-top: 10px;">{{group?.messages[group.messages.length-1]?.message}}</p>
+          <p *ngIf="group.messages==null" style="margin-top: 10px;"></p>
+          <p item-end style="margin-top: -30px">{{group?.date_lastMessage| timeAgo}}</p>
         </ion-item>
-  
-        <ion-item>
-            <ion-thumbnail item-start>
-          <img src="../../assets/imgs/880.png" width="200px" />
-          </ion-thumbnail>
-          <h2 class="center">FAISAL</h2>
-          <p style="margin-top: 10px;">Hello</p>
-          <p item-end style="margin-top: -30px">2018/30/10</p>
-        </ion-item>
-  
+      </div>
+
+
     </ion-list>
 
 </ion-content>

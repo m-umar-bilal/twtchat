@@ -11,21 +11,29 @@ import {catchError, retry} from 'rxjs/operators';
 import {environment} from "../env";
 import {Observable} from "rxjs/Rx";
 import {Device} from '@ionic-native/device';
-import {Platform} from "ionic-angular";
+import {Platform, ToastController} from "ionic-angular";
 import {GooglePlus} from "@ionic-native/google-plus";
 import {Facebook} from "@ionic-native/facebook";
 
 // Service to set the API headers
 @Injectable()
 export class RestService {
+  get userData() {
+    return this._userData;
+  }
+
+  set userData(value) {
+    this._userData = value;
+  }
 
   public serverURL = environment.API_URL;
   user;
   profile;
+  private _userData;
 
-  constructor(private http: HttpClient, private device: Device,   private fb: Facebook,
+  constructor(private http: HttpClient, private device: Device, private fb: Facebook,
               private platform: Platform,
-              private googlePlus: GooglePlus) {
+              private googlePlus: GooglePlus, private toast: ToastController) {
     this.user = this.getSession();
     this.profile = this.getprofile();
   }
@@ -44,6 +52,17 @@ export class RestService {
     } else {
       return this.profile;
     }
+  }
+
+  public toastMessage(message) {
+
+    this.toast.create({
+      message: message,
+      duration: 4000, // 2000 ms
+      position: "bottom",
+      cssClass: "styling"
+    }).present();
+
   }
 
   public getOptions() {
@@ -124,7 +143,7 @@ export class RestService {
           // this.auth.auth.signInWithCredential(facebookCredential).then(user => {
           //   console.log(JSON.stringify(user));
           //   console.log(user, null, 2);
-            observer.next(res);
+          observer.next(res);
           // }).catch(error => {
           //   observer.error(error);
           // });
@@ -158,7 +177,7 @@ export class RestService {
           // const googleCredential = firebase.auth.GoogleAuthProvider.credential(res.idToken);
           // firebase.auth().signInWithCredential(googleCredential).then(response => {
           //   console.log("Firebase success: " + JSON.stringify(response));
-            resolve(res)
+          resolve(res)
           // }).catch((error) => {
           //   // alert('error 1 ' + error);
           //   reject(error);
@@ -182,8 +201,7 @@ export class RestService {
   }
 
 
-
-  signup(name,email, password,phone): Observable<any> {
+  signup(name, email, password, phone): Observable<any> {
 
     const body = new HttpParams()
       .set('name', name)
@@ -219,6 +237,61 @@ export class RestService {
       }
     );
   }
+
+  changePassword(username, old, nEw): Observable<any> {
+
+    const body = new HttpParams()
+      .set('email', username)
+      .set('oldPassword', CryptoJS.MD5(old))
+      .set('newPassword', CryptoJS.MD5(nEw));
+
+    console.log(body.toString());
+    return this.http.post(this.serverURL + 'changePassword.php',
+
+      body.toString(),
+      {
+        headers: new HttpHeaders()
+          .set('Content-Type', 'application/x-www-form-urlencoded')
+      }
+    );
+  }
+
+  updateProfile(email, name, status,password) {
+    const body = new HttpParams()
+      .set('email', email)
+      .set('name', name)
+      .set('status', status)
+      .set('password', password);
+
+    console.log(body.toString());
+    return this.http.post(this.serverURL + 'changeInfo.php',
+
+      body.toString(),
+      {
+        headers: new HttpHeaders()
+          .set('Content-Type', 'application/x-www-form-urlencoded')
+      }
+    );
+  }
+
+  getGroups(email,password) {
+    const body = new HttpParams()
+      .set('email', email)
+      .set('array_messages', "[]")
+      .set('status', status)
+      .set('password', password);
+
+    console.log(body.toString());
+    return this.http.post(this.serverURL + 'twtchat.php',
+
+      body.toString(),
+      {
+        headers: new HttpHeaders()
+          .set('Content-Type', 'application/x-www-form-urlencoded')
+      }
+    );
+  }
+
 
   public requestPOST(link, body) {
     return this.http.post(link, body, this.getOptions())

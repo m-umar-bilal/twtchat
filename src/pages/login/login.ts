@@ -3,6 +3,8 @@ import {IonicPage, NavController, NavParams} from 'ionic-angular';
 import {TabsPage} from '../tabs/tabs';
 import {RestService, ToastAlertsService} from "../../services";
 import {ForgotPasswordPage} from "../forgot-password/forgot-password";
+import * as CryptoJS from 'crypto-js';
+
 
 @IonicPage()
 @Component({
@@ -25,15 +27,17 @@ export class LoginPage {
 
     this.svc.login(this.user.email, this.user.password)
       .subscribe(res => {
-        if(!res.success){
-          let toast = this.toastsAlertService.createToast(res.error_message);
-          toast.present();
+          if (!res.success) {
+            let toast = this.toastsAlertService.createToast(res.error_message);
+            toast.present();
 
-        } else {
-          localStorage.setItem('currentUser',  JSON.stringify(res));
-          localStorage.setItem('active', 'show');
-          this.navCtrl.push(TabsPage);
-        }
+          } else {
+            let pass =  encodeURIComponent(CryptoJS.MD5(this.user.password));
+            console.log(pass);
+            localStorage.setItem('currentUser', JSON.stringify({...res, password:pass}));
+            localStorage.setItem('active', 'show');
+            this.navCtrl.push(TabsPage);
+          }
         },
         err => {
           console.log(err);

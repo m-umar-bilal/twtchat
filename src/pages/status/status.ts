@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import {Events, IonicPage, Loading, NavController, NavParams} from 'ionic-angular';
 import { MyStatusPage } from '../my-status/my-status';
+import {environment} from "../../env";
 
 /**
  * Generated class for the StatusPage page.
@@ -16,7 +17,15 @@ import { MyStatusPage } from '../my-status/my-status';
 })
 export class StatusPage {
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  public serverURL: string = environment.API_URL;
+  currentUser = JSON.parse(localStorage.getItem('currentUser'));
+
+  constructor(public navCtrl: NavController, public navParams: NavParams,public events: Events) {
+    events.subscribe('user:updated', (user, time) => {
+      // user and time are the same arguments passed in `events.publish(user, time)`
+      console.log('Welcome', user, 'at', time);
+      this.currentUser = user;
+    });
   }
 
   ionViewDidLoad() {

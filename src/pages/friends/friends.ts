@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import {Events, IonicPage, NavController, NavParams} from 'ionic-angular';
 import { ContactInfoPage } from '../contact-info/contact-info';
 import { AddFriendsPage } from '../add-friends/add-friends';
 import { PendingFriendsPage } from '../pending-friends/pending-friends';
+import {RestService} from "../../services";
+import {environment} from "../../env";
 
 /**
  * Generated class for the FriendsPage page.
@@ -17,8 +19,15 @@ import { PendingFriendsPage } from '../pending-friends/pending-friends';
   templateUrl: 'friends.html',
 })
 export class FriendsPage {
-
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  currentUser = JSON.parse(localStorage.getItem('currentUser'));
+  public serverURL: string = environment.API_URL;
+  constructor(public navCtrl: NavController, public navParams: NavParams,
+              public events: Events,public svc:RestService) {
+    events.subscribe('user:updated', (user, time) => {
+      // user and time are the same arguments passed in `events.publish(user, time)`
+      console.log('Welcome', user, 'at', time);
+      this.currentUser = user;
+    });
   }
 
   ionViewDidLoad() {

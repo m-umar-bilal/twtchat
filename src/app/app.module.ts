@@ -68,7 +68,11 @@ import {HttpClientModule} from "@angular/common/http";
 import {HttpService} from "../services/http-service";
 import {GooglePlus} from "@ionic-native/google-plus";
 import {Facebook} from "@ionic-native/facebook";
-
+import {ChangePasswordPage} from "../pages/change-password/change-password";
+import {Transfer} from "@ionic-native/transfer";
+import {FilePath} from "@ionic-native/file-path";
+import {File} from "@ionic-native/file";
+import {TimeAgoPipe} from 'time-ago-pipe';
 @NgModule({
   declarations: [
     MyApp,
@@ -97,7 +101,9 @@ import {Facebook} from "@ionic-native/facebook";
     StatusPage,
     TwtchatPage,
     MyStatusPage,
-    TabsPage
+    TabsPage,
+    TimeAgoPipe,
+    ChangePasswordPage
   ],
   imports: [
     BrowserModule,
@@ -111,6 +117,7 @@ import {Facebook} from "@ionic-native/facebook";
     ChatPage,
     GroupsPage,
     FriendsPage,
+    ChangePasswordPage,
     SettingsPage,
     EditProfilePage,
     ChatWallpaperPage,
@@ -143,6 +150,9 @@ import {Facebook} from "@ionic-native/facebook";
     // RequestService,
     CommonService,
     Camera,
+    File,
+    Transfer,
+    FilePath,
     SecureStorage,
     // File,
     CommonModalsService,

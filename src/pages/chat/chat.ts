@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import {Events, IonicPage, NavController, NavParams} from 'ionic-angular';
 import { ChatsendPage } from '../chatsend/chatsend';
+import {RestService} from "../../services";
+import {environment} from "../../env";
 
 @IonicPage()
 @Component({
@@ -8,8 +10,15 @@ import { ChatsendPage } from '../chatsend/chatsend';
   templateUrl: 'chat.html',
 })
 export class ChatPage {
-
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  currentUser = JSON.parse(localStorage.getItem('currentUser'));
+  public serverURL: string = environment.API_URL;
+  constructor(public navCtrl: NavController, public navParams: NavParams,
+              public events: Events,public svc:RestService) {
+    events.subscribe('user:updated', (user, time) => {
+      // user and time are the same arguments passed in `events.publish(user, time)`
+      console.log('Welcome', user, 'at', time);
+      this.currentUser = user;
+    });
   }
 
   ionViewDidLoad() {

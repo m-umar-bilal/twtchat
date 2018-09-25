@@ -1,7 +1,7 @@
 <ion-header>
   <ion-navbar>
       <ion-buttons end>
-          <button ion-button>Done</button>
+          <button ion-button [disabled]="f.invalid" (click)="updateUserProfile()">Done</button>
       </ion-buttons>
     <ion-title>Edit Profile</ion-title>
   </ion-navbar>
@@ -11,31 +11,34 @@
 
 <ion-content>
 
-  <img class="img" src="../../assets/imgs/880.png" width="200px" />
+  <img (click)="presentActionSheet()" class="img" [src]="serverURL+currentUser?.photoProfil||'../../assets/imgs/880.png'"  width="200px" />
+  <form novalidate #f="ngForm">
 
   <ion-list style="margin-top: 50px;">
-      <ion-item>
+
+
+    <ion-item>
           <ion-label color="primary" stacked>Name</ion-label>
-        <ion-input value="faisal"></ion-input>
+        <ion-input name="full_name" [(ngModel)]="currentUser.name" required></ion-input>
       </ion-item>
 
       <ion-item>
           <ion-label color="primary" stacked>Status</ion-label>
-        <ion-input value="Good"></ion-input>
+        <ion-input name="status" [(ngModel)]="currentUser.status_text" required></ion-input>
       </ion-item>
 
       <ion-item>
           <ion-label color="primary" stacked>Phone Number</ion-label>
-        <ion-input value="0550088434"></ion-input>
+        <ion-input name="phone" [(ngModel)]="currentUser.phone" disabled="true"></ion-input>
       </ion-item>
 
       <ion-item>
           <ion-label color="primary" stacked>Email</ion-label>
-        <ion-input value="tcc404@gmail.com"></ion-input>
+        <ion-input name="email" [(ngModel)]="currentUser.email" disabled="true" ></ion-input>
       </ion-item>
 
   </ion-list>
-
-  <button class="but" ion-button>Change Password</button>
+  </form>
+  <button class="but" (click)="goToChangePassword()" ion-button>Change Password</button>
 
 </ion-content>
