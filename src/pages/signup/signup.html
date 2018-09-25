@@ -1,0 +1,21 @@
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>signup</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+
+    <img class="center" src="../../assets/imgs/logo.png" width="200px" />
+
+    <button ion-button (click)="goToSignup()" full><ion-icon class="email" name="mail"></ion-icon>Sign Up With Email</button>
+    <h5 style="text-align: center">OR</h5>
+    <button ion-button full (click)="fb()" color="facebook"><ion-icon class="facebook" name="logo-facebook"></ion-icon>Sign Up With Facebook</button>
+
+    <button ion-button full (click)="google()" color="google"><ion-icon class="google" name="logo-google"></ion-icon>Sign Up With Google</button>
+
+  </ion-content>
+

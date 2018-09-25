@@ -1,0 +1,62 @@
+<ion-header>
+
+  <ion-navbar>
+      <ion-buttons end>
+          <button (click)="searchgroups()" ion-button icon-only><ion-icon name="add"></ion-icon></button>
+      </ion-buttons>
+    <ion-title>Groups</ion-title>
+    <ion-buttons start>
+        <button (click)="pendinggroups()" ion-button icon-only><ion-icon name="notifications"></ion-icon></button>
+    </ion-buttons>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content>
+
+    <ion-list style="margin: 0;padding: 0;list-style-type: none;">
+        <ion-icon class="bar" name="contacts" item-start> PUBLIC GROUPS</ion-icon>
+        <ion-item>
+            <ion-thumbnail item-start>
+          <img src="../../assets/imgs/880.png" width="200px" />
+          </ion-thumbnail>
+          <h2 class="center">FAISAL</h2>
+          <p style="margin-top: 10px;">Photo</p>
+          <p item-end style="margin-top: -30px">2018/30/10</p>
+        </ion-item>
+  
+        <ion-item>
+            <ion-thumbnail item-start>
+          <img src="../../assets/imgs/880.png" width="200px" />
+          </ion-thumbnail>
+          <h2 class="center">FAISAL</h2>
+          <p style="margin-top: 10px;">Hello</p>
+          <p item-end style="margin-top: -30px">2018/30/10</p>
+        </ion-item>
+  
+    </ion-list>
+
+    <ion-list>
+        <ion-icon class="bar" name="lock" item-start> PRIVATE GROUPS</ion-icon>
+        <ion-item>
+            <ion-thumbnail item-start>
+          <img src="../../assets/imgs/880.png" width="200px" />
+          </ion-thumbnail>
+          <h2 class="center">FAISAL</h2>
+          <p style="margin-top: 10px;">Photo</p>
+          <p item-end style="margin-top: -30px">2018/30/10</p>
+        </ion-item>
+  
+        <ion-item>
+            <ion-thumbnail item-start>
+          <img src="../../assets/imgs/880.png" width="200px" />
+          </ion-thumbnail>
+          <h2 class="center">FAISAL</h2>
+          <p style="margin-top: 10px;">Hello</p>
+          <p item-end style="margin-top: -30px">2018/30/10</p>
+        </ion-item>
+  
+    </ion-list>
+
+</ion-content>

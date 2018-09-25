@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "226323717953",
+    "firebase_url": "https://twtchat-bbaff.firebaseio.com",
+    "project_id": "twtchat-bbaff",
+    "storage_bucket": "twtchat-bbaff.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:226323717953:android:1d4d696a494233fb",
+        "android_client_info": {
+          "package_name": "com.dot.twtchat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "226323717953-q12ms5dsd4u6gjg4gpcgf1umr3iub1p9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.dot.twtchat",
+            "certificate_hash": "e011c37b018982b9ff09d7afdfed9f37caa5b0b3"
+          }
+        },
+        {
+          "client_id": "226323717953-h0icfur9976jm7n0aa8qj4h8qo1erute.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDWzlFXrUpG1_-Y8bnNVId0by1Vp5Bpn2I"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "226323717953-h0icfur9976jm7n0aa8qj4h8qo1erute.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

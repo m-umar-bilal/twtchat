@@ -1,0 +1,24 @@
+page-chat {
+.item-ios ion-thumbnail ion-img,
+.item-ios ion-thumbnail img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50px;
+}
+.item-md ion-thumbnail ion-img,
+.item-md ion-thumbnail img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50px;
+}
+.num {
+  margin-top: 10px;
+  background-color: #55acee;
+  border-radius: 100px;
+  padding-right: 7px;
+  padding-left: 7px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  color: #ffffff;
+}
+}

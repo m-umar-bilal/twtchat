@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>AD_UNIT_ID_FOR_BANNER_TEST</key>
+	<string>ca-app-pub-3940256099942544/2934735716</string>
+	<key>AD_UNIT_ID_FOR_INTERSTITIAL_TEST</key>
+	<string>ca-app-pub-3940256099942544/4411468910</string>
+	<key>CLIENT_ID</key>
+	<string>226323717953-23ksueuorg3t29u931hi4i1cfe36m9v0.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.226323717953-23ksueuorg3t29u931hi4i1cfe36m9v0</string>
+	<key>API_KEY</key>
+	<string>AIzaSyAWhSYbnqR6deke460Zf-8_bcH3G954ask</string>
+	<key>GCM_SENDER_ID</key>
+	<string>226323717953</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.dot.twtchat</string>
+	<key>PROJECT_ID</key>
+	<string>twtchat-bbaff</string>
+	<key>STORAGE_BUCKET</key>
+	<string>twtchat-bbaff.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<true></true>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<false></false>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:226323717953:ios:1d4d696a494233fb</string>
+	<key>DATABASE_URL</key>
+	<string>https://twtchat-bbaff.firebaseio.com</string>
+</dict>
+</plist>

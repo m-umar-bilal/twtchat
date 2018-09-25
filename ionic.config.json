@@ -1,0 +1,8 @@
+{
+  "name": "twtchat",
+  "integrations": {
+    "cordova": {}
+  },
+  "type": "ionic-angular",
+  "pro_id": "97e5131b"
+}

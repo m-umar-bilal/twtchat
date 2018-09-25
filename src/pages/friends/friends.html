@@ -1,0 +1,63 @@
+<ion-header>
+
+    <ion-navbar>
+        <ion-buttons end>
+            <button (click)="addfrinds()" ion-button icon-only><ion-icon name="add"></ion-icon></button>
+        </ion-buttons>
+      <ion-title>Friends</ion-title>
+      <ion-buttons start>
+          <button (click)="pendingfriends()" ion-button icon-only><ion-icon name="notifications"></ion-icon></button>
+      </ion-buttons>
+    </ion-navbar>
+
+</ion-header>
+
+<ion-content>
+
+    <ion-searchbar></ion-searchbar>
+
+
+  <ion-list>
+      <ion-item (click)="contactinfo()">
+          <ion-thumbnail item-start>
+        <img src="../../assets/imgs/880.png" width="200px" />
+        </ion-thumbnail>
+        <h2 class="center">Ahmed</h2>
+        <p style="margin-top: 10px;">Hello :)</p>
+      </ion-item>
+
+      <ion-item (click)="contactinfo()">
+          <ion-thumbnail item-start>
+        <img src="../../assets/imgs/880.png" width="200px" />
+        </ion-thumbnail>
+        <h2 class="center">Khaled</h2>
+        <p style="margin-top: 10px;">Hello</p>
+      </ion-item>
+
+      <ion-item (click)="contactinfo()">
+          <ion-thumbnail item-start>
+        <img src="../../assets/imgs/880.png" width="200px" />
+        </ion-thumbnail>
+        <h2 class="center">Abdullah</h2>
+        <p style="margin-top: 10px;">Hello</p>
+      </ion-item>
+
+      <ion-item (click)="contactinfo()">
+          <ion-thumbnail item-start>
+        <img src="../../assets/imgs/880.png" width="200px" />
+        </ion-thumbnail>
+        <h2 class="center">Salem</h2>
+        <p style="margin-top: 10px;">Hello</p>
+      </ion-item>
+
+      <ion-item (click)="contactinfo()">
+          <ion-thumbnail item-start>
+        <img src="../../assets/imgs/880.png" width="200px" />
+        </ion-thumbnail>
+        <h2 class="center">Rawan</h2>
+        <p style="margin-top: 10px;">Hello</p>
+      </ion-item>
+
+  </ion-list>
+
+</ion-content>

@@ -1,0 +1,88 @@
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>Settings My Groups</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content>
+
+
+    <ion-searchbar
+    [(ngModel)]="myInput"
+    [showCancelButton]="shouldShowCancel"
+    (ionInput)="onInput($event)"
+    (ionCancel)="onCancel($event)">
+  </ion-searchbar>
+
+  <ion-list>
+      <ion-item-sliding (click)="itemDetails" (ionSwipe)="delete" (click)="groupinfo()">
+          <ion-item> 
+              <ion-thumbnail item-start>
+                  <img src="../../assets/imgs/880.png" width="200px" />
+                  </ion-thumbnail>
+                  <h2 class="center">Group 1</h2>
+                  <p style="margin-top: 10px;">Hello</p>
+          </ion-item>
+          <ion-item-options>
+              <button on-click="goToPage10()" ion-button color="danger"><ion-icon style="font-size: 40px;" name="trash"></ion-icon>Delete</button>
+           </ion-item-options>
+         </ion-item-sliding>
+
+      <ion-item-sliding (click)="itemDetails" (ionSwipe)="delete">
+          <ion-item> 
+              <ion-thumbnail item-start>
+                  <img src="../../assets/imgs/880.png" width="200px" />
+                  </ion-thumbnail>
+                  <h2 class="center">Group 2</h2>
+                  <p style="margin-top: 10px;">Hello</p>
+          </ion-item>
+          <ion-item-options>
+              <button on-click="goToPage10()" ion-button color="danger"><ion-icon style="font-size: 40px;" name="trash"></ion-icon>Delete</button>
+           </ion-item-options>
+         </ion-item-sliding>
+
+      <ion-item-sliding (click)="itemDetails" (ionSwipe)="delete">
+          <ion-item> 
+              <ion-thumbnail item-start>
+                  <img src="../../assets/imgs/880.png" width="200px" />
+                  </ion-thumbnail>
+                  <h2 class="center">Group 3</h2>
+                  <p style="margin-top: 10px;">Hello</p>
+          </ion-item>
+          <ion-item-options>
+              <button on-click="goToPage10()" ion-button color="danger"><ion-icon style="font-size: 40px;" name="trash"></ion-icon>Delete</button>
+           </ion-item-options>
+         </ion-item-sliding>
+
+      <ion-item-sliding (click)="itemDetails" (ionSwipe)="delete">
+          <ion-item> 
+              <ion-thumbnail item-start>
+                  <img src="../../assets/imgs/880.png" width="200px" />
+                  </ion-thumbnail>
+                  <h2 class="center">Group 4</h2>
+                  <p style="margin-top: 10px;">Hello</p>
+          </ion-item>
+          <ion-item-options>
+              <button on-click="goToPage10()" ion-button color="danger"><ion-icon style="font-size: 40px;" name="trash"></ion-icon>Delete</button>
+           </ion-item-options>
+         </ion-item-sliding>
+
+      <ion-item-sliding (click)="itemDetails" (ionSwipe)="delete">
+          <ion-item> 
+              <ion-thumbnail item-start>
+                  <img src="../../assets/imgs/880.png" width="200px" />
+                  </ion-thumbnail>
+                  <h2 class="center">Group 5</h2>
+                  <p style="margin-top: 10px;">Hello</p>
+          </ion-item>
+          <ion-item-options>
+              <button on-click="goToPage10()" ion-button color="danger"><ion-icon style="font-size: 40px;" name="trash"></ion-icon>Delete</button>
+           </ion-item-options>
+         </ion-item-sliding>
+  </ion-list>
+
+
+</ion-content>

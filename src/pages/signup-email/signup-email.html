@@ -1,0 +1,41 @@
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>Sign Up</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+
+  <img class="center" src="../../assets/imgs/logo.png" width="200px" />
+  <form novalidate #f="ngForm" (ngSubmit)="signup()">
+
+  <ion-list style="margin-top: 20px;">
+    <ion-item>
+      <ion-input type="text" placeholder="Name" name="name" [(ngModel)]="user.name" required></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-input type="phone" placeholder="Phone" name="phone" [(ngModel)]="user.phone" required></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-input type="email" placeholder="Email" name="email" [(ngModel)]="user.email" required pattern="^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-input type="password" placeholder="Password" name="password" [(ngModel)]="user.password" required></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-input type="password" placeholder="Confirm Password" name="c_password" [(ngModel)]="user.c_password" required></ion-input>
+    </ion-item>
+  </ion-list>
+
+  <ion-item>
+    <ion-label>I Agree to Twtchat’s Terms of Service.</ion-label>
+    <ion-checkbox name="check" [(ngModel)]="agreed"></ion-checkbox>
+  </ion-item>
+  <button ion-button type="submit" [disabled]="f.invalid||!agreed||user.password!==user.c_password" full>Sign Up</button>
+  </form>
+
+</ion-content>
