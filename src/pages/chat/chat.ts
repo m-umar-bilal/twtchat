@@ -25,6 +25,6 @@ export class ChatPage {
     console.log('ionViewDidLoad ChatPage');
   }
 chatsend(){
-  this.navCtrl.push(ChatsendPage);
+  this.navCtrl.push("ChatsendPage");
 }
 }

@@ -11,7 +11,7 @@ import { WelcomePage } from '../pages/welcome/welcome';
 })
 export class MyApp {
   // Defult TabsPage
-  rootPage:any = WelcomePage;
+  rootPage:any = "WelcomePage";
 
   constructor(platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen) {
     platform.ready().then(() => {

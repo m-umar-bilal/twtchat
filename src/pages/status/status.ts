@@ -32,6 +32,6 @@ export class StatusPage {
     console.log('ionViewDidLoad StatusPage');
   }
 mystatus(){
-  this.navCtrl.push(MyStatusPage);
+  this.navCtrl.push("MyStatusPage");
 }
 }

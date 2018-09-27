@@ -25,17 +25,17 @@ export class SignupPage {
   }
 
   goToSignup() {
-    this.navCtrl.push(SignupEmailPage);
+    this.navCtrl.push("SignupEmailPage");
   }
 
   fb() {
     this.rs.loginWithFacebook().subscribe((res) => {
       console.log(res)
       let data = {name: res.name, email: res.email};
-      this.navCtrl.push(SignupEmailPage, data);
+      this.navCtrl.push("SignupEmailPage", data);
 
     }, err => {
-      let toast = this.ts.createToast(err);
+      let toast = this.ts.createToast("Facebook login cancelled.");
       toast.present();
     })
   }
@@ -44,11 +44,11 @@ export class SignupPage {
     this.rs.loginWithGoogle().then((res: any) => {
       console.log(res);
       let data = {name: res.displayName, email: res.email};
-      this.navCtrl.push(SignupEmailPage, data);
+      this.navCtrl.push("SignupEmailPage", data);
 
     }).catch((err) => {
       console.log(err);
-      let toast = this.ts.createToast(err);
+      let toast = this.ts.createToast("Google login cancelled.");
       toast.present();
     })
 

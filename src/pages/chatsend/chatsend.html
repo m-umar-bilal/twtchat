@@ -1,16 +1,88 @@
 <ion-header (click)="contactinfo()">
 
   <ion-navbar>
-      <ion-buttons end>
-          <button ion-button icon-only><ion-icon name="more"></ion-icon></button>
-      </ion-buttons>
-    <ion-title>Shat Send</ion-title>
+    <ion-title>{{groupData?.name}}</ion-title>
   </ion-navbar>
 
 </ion-header>
 
-<ion-content padding>
+<ion-content>
+
+  <div class="message-wrap">
+
+    <div *ngFor="let msg of messages"
+         class="message"
+         [class.left]=" msg.user_id !== currentUser.user_id "
+         [class.right]=" msg.user_id === currentUser.user_id ">
+      <img class="user-img" *ngIf="msg?.photo_profil" [src]="serverURL+msg?.directory+msg?.photo_profil||'../../assets/imgs/880.png'" alt="" src="">
+      <!--<img class="user-img" *ngIf="!msg?.photo_profil" [src]="'../../assets/imgs/880.png'" alt="" src="">-->
+      <ion-spinner name="dots" *ngIf="msg.status === 'pending'"></ion-spinner>
+      <div class="msg-detail">
+        <div class="msg-info">
+          <p>
+            {{msg.name}}&nbsp;&nbsp;&nbsp;{{msg.create_date |  timeAgo}}</p>
+        </div>
+        <div class="msg-content" *ngIf="msg.type_message==='text'">
+          <span class="triangle"></span>
+          <p class="line-breaker ">
+            {{msg.message}}
+          </p>
+
+        </div>
+        <div *ngIf="msg.type_message==='video'">
+          <span class="triangle"></span>
+
+          <div class="line-breaker " >
+          <video controls='controls' preload='metadata'>
+            <source [src]='serverURL+msg?.directory+msg?.message' type='video/mp4'>
+          </video>
+          </div>
+
+        </div>
+        <div class="msg-content" *ngIf="msg.type_message==='photo'">
+          <span class="triangle"></span>
+
+          <div class="line-breaker " >
+          <img [src]="serverURL+msg?.directory+msg?.message" alt="" src="">
+          </div>
 
 
-  </ion-content>
+        </div>
+        <div  *ngIf="msg.type_message==='audio'">
+          <span class="triangle"></span>
+          <div class="line-breaker " >
+          <audio controls>
+            <source [src]='serverURL+msg?.directory+msg?.message' [type]="msg?.mime">
+            <!--<source src="horse.mp3" type="audio/mpeg">-->
+          </audio>
 
+          </div>
+
+
+        </div>
+
+
+      </div>
+    </div>
+
+  </div>
+
+</ion-content>
+
+<ion-footer no-border [style.height]="showEmojiPicker ? '255px' : '55px'">
+  <div class="input-wrap">
+    <button ion-button clear icon-only item-right (click)="switchEmojiPicker()">
+      <ion-icon name="md-happy"></ion-icon>
+    </button>
+    <textarea #chat_input
+              placeholder="Text Input"
+              [(ngModel)]="editorMsg"
+              (keyup.enter)="sendMsg()"
+              (focusin)="onFocus()">
+    </textarea>
+    <button ion-button clear icon-only item-right (click)="sendMsg()">
+      <ion-icon name="ios-send" ios="ios-send" md="md-send"></ion-icon>
+    </button>
+  </div>
+  <emoji-picker [(ngModel)]="editorMsg"></emoji-picker>
+</ion-footer>

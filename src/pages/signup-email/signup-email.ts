@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {IonicPage, NavController, NavParams} from 'ionic-angular';
+import {App, IonicPage, NavController, NavParams} from 'ionic-angular';
 import {TabsPage} from "../tabs/tabs";
 import {RestService, ToastAlertsService} from "../../services";
 import * as CryptoJS from 'crypto-js';
@@ -20,7 +20,9 @@ export class SignupEmailPage {
   agreed: boolean = false;
   user = {name: '', email: '', password: '', phone: '', c_password: ''};
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, private svc: RestService, private toastsAlertService: ToastAlertsService) {
+  constructor(
+    public app: App,
+    public navCtrl: NavController, public navParams: NavParams, private svc: RestService, private toastsAlertService: ToastAlertsService) {
 
     this.user.name = this.navParams.get('name');
     this.user.email = this.navParams.get('email');
@@ -29,7 +31,18 @@ export class SignupEmailPage {
   ionViewDidLoad() {
     console.log('ionViewDidLoad SignupEmailPage');
   }
+  setAppRoot(rootPage) {
+    // this.app.getActiveNavs()[0].setRoot(rootPage);
+    var nav = this.app.getRootNavs()[0];
+    nav.popToRoot()
+      .then(() => {
+        nav.setRoot(rootPage);
+      });
 
+
+    // this.nav = this.app.getRootNavById('n4'); //WORKS! no console warning
+    // this.nav.setRoot(rootPage);
+  }
   signup() {
     this.svc.signup(this.user.name, this.user.email, this.user.password, this.user.phone)
       .subscribe(res => {
@@ -42,7 +55,8 @@ export class SignupEmailPage {
               password: encodeURIComponent(CryptoJS.MD5(this.user.password))
             }));
             localStorage.setItem('active', 'show');
-            this.navCtrl.push(TabsPage);
+            this.setAppRoot("TabsPage");
+
           }
         },
         err => {

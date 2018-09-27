@@ -11,7 +11,7 @@ import {catchError, retry} from 'rxjs/operators';
 import {environment} from "../env";
 import {Observable} from "rxjs/Rx";
 import {Device} from '@ionic-native/device';
-import {Platform, ToastController} from "ionic-angular";
+import {Platform} from "ionic-angular";
 import {GooglePlus} from "@ionic-native/google-plus";
 import {Facebook} from "@ionic-native/facebook";
 
@@ -33,7 +33,7 @@ export class RestService {
 
   constructor(private http: HttpClient, private device: Device, private fb: Facebook,
               private platform: Platform,
-              private googlePlus: GooglePlus, private toast: ToastController) {
+              private googlePlus: GooglePlus) {
     this.user = this.getSession();
     this.profile = this.getprofile();
   }
@@ -54,16 +54,18 @@ export class RestService {
     }
   }
 
-  public toastMessage(message) {
-
-    this.toast.create({
-      message: message,
-      duration: 4000, // 2000 ms
-      position: "bottom",
-      cssClass: "styling"
-    }).present();
-
-  }
+  //
+  // public toastMessage(message) {
+  //
+  //   this.toast.create(message).present();
+  //
+  //   // this.toast.create({
+  //   //   message: message,
+  //   //   duration: 4000, // 2000 ms
+  //   //   position: "bottom",
+  //   //   cssClass: "styling"
+  //   // }).present();
+  // }
 
   public getOptions() {
 
@@ -256,7 +258,7 @@ export class RestService {
     );
   }
 
-  updateProfile(email, name, status,password) {
+  updateProfile(email, name, status, password) {
     const body = new HttpParams()
       .set('email', email)
       .set('name', name)
@@ -274,11 +276,28 @@ export class RestService {
     );
   }
 
-  getGroups(email,password) {
+  getGroups(email, password) {
     const body = new HttpParams()
       .set('email', email)
       .set('array_messages', "[]")
       .set('status', status)
+      .set('password', password);
+
+    console.log(body.toString());
+    return this.http.post(this.serverURL + 'twtchat.php',
+
+      body.toString(),
+      {
+        headers: new HttpHeaders()
+          .set('Content-Type', 'application/x-www-form-urlencoded')
+      }
+    );
+  }
+
+  sendChat(email, password, user_id_app, conversation_id, type_conversation, message, type_message, obj) {
+    const body = new HttpParams()
+      .set('email', email)
+      .set('array_messages', JSON.stringify([{conversation_id, type_conversation:"1", message, type_message, unique_code:obj}]))
       .set('password', password);
 
     console.log(body.toString());

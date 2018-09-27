@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {IonicPage, NavController, NavParams} from 'ionic-angular';
+import {App, IonicPage, NavController, NavParams} from 'ionic-angular';
 import {TabsPage} from '../tabs/tabs';
 import {RestService, ToastAlertsService} from "../../services";
 import {ForgotPasswordPage} from "../forgot-password/forgot-password";
@@ -15,11 +15,25 @@ export class LoginPage {
 
   user = {email: '', password: ''};
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, private svc: RestService, private toastsAlertService: ToastAlertsService) {
+  constructor(    public app: App,
+                  public navCtrl: NavController, public navParams: NavParams, private svc: RestService, private toastsAlertService: ToastAlertsService) {
   }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad LoginPage');
+  }
+
+  setAppRoot(rootPage) {
+    // this.app.getActiveNavs()[0].setRoot(rootPage);
+    var nav = this.app.getRootNavs()[0];
+    nav.popToRoot()
+      .then(() => {
+        nav.setRoot(rootPage);
+      });
+
+
+    // this.nav = this.app.getRootNavById('n4'); //WORKS! no console warning
+    // this.nav.setRoot(rootPage);
   }
 
   home() {
@@ -36,7 +50,7 @@ export class LoginPage {
             console.log(pass);
             localStorage.setItem('currentUser', JSON.stringify({...res, password:pass}));
             localStorage.setItem('active', 'show');
-            this.navCtrl.push(TabsPage);
+            this.setAppRoot("TabsPage");
           }
         },
         err => {
@@ -49,6 +63,6 @@ export class LoginPage {
   }
 
   goToForgotPass() {
-    this.navCtrl.push(ForgotPasswordPage);
+    this.navCtrl.push("ForgotPasswordPage");
   }
 }

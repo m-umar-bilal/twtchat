@@ -38,10 +38,10 @@ export class GroupsPage {
   }
 
   searchgroups() {
-    this.navCtrl.push(SearchGroupsPage);
+    this.navCtrl.push("SearchGroupsPage");
   }
 
   pendinggroups() {
-    this.navCtrl.push(PendingGroupsPage);
+    this.navCtrl.push("PendingGroupsPage");
   }
 }

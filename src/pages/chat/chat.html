@@ -10,7 +10,7 @@
 <ion-content>
   <ion-list>
 
-    <ion-item-sliding *ngFor="let friend of svc.userData.privates" (click)="itemDetails" (ionSwipe)="delete" (click)="chatsend()">
+    <ion-item-sliding *ngFor="let friend of svc.userData?.privates" (click)="itemDetails" (ionSwipe)="delete" (click)="chatsend()">
       <ion-item>
         <ion-thumbnail item-start>
           <img [src]="serverURL+friend?.directory+friend?.photo_profil||'../../assets/imgs/880.png'" width="200px" />

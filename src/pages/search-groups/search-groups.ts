@@ -23,6 +23,6 @@ export class SearchGroupsPage {
     console.log('ionViewDidLoad SearchGroupsPage');
   }
   addgroups(){
-    this.navCtrl.push(AddGroupPage);
+    this.navCtrl.push("AddGroupPage");
   }
 }

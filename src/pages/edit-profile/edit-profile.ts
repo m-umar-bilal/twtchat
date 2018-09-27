@@ -75,7 +75,7 @@ export class EditProfilePage {
     var options = {
       targetWidth: 300,
       targetHeight: 300,
-      allowEdit:true,
+      allowEdit: true,
       sourceType: sourceType,
       saveToPhotoAlbum: false,
       correctOrientation: true
@@ -120,11 +120,8 @@ export class EditProfilePage {
   }
 
   private presentToast(text) {
-    let toast = this.toastsAlertService.createToast({
-      message: text,
-      duration: 3000,
-      position: 'top'
-    });
+    let toast = this.toastsAlertService.createToast(text
+    );
     toast.present();
   }
 
@@ -162,14 +159,14 @@ export class EditProfilePage {
 
     // File name only
     var filename = this.lastImage;
-    let params = {email:this.currentUser.email,password:this.currentUser.password};
+    let params = {email: this.currentUser.email, password: this.currentUser.password};
 
     var options = {
       fileKey: "file",
       fileName: filename,
       chunkedMode: false,
       mimeType: "multipart/form-data",
-      params: {...params,'fileName': filename}
+      params: {...params, 'fileName': filename}
     };
 
     const fileTransfer: TransferObject = this.transfer.create();
@@ -180,14 +177,14 @@ export class EditProfilePage {
     this.loading.present();
 
     // Use the FileTransfer to upload the image
-    fileTransfer.upload(targetPath, url, options).then(data => {
+    fileTransfer.upload(targetPath, url, options).then((data: any) => {
       this.loading.dismissAll()
-      this.currentUser["photoProfil"]=data["photoProfil"];
-      localStorage.setItem("currentUser",JSON.stringify(this.currentUser));
+      this.currentUser["photoProfil"] = JSON.parse(data.response).photoProfil;
+      localStorage.setItem("currentUser", JSON.stringify(this.currentUser));
       this.events.publish('user:updated', this.currentUser, Date.now());
 
-      console.log(data);
-      this.presentToast('Image succesful uploaded.');
+      console.log(JSON.parse(data.response).photoProfil);
+      this.presentToast('Image Successfully uploaded.');
     }, err => {
       this.loading.dismissAll()
       this.presentToast('Error while uploading file.');
@@ -198,11 +195,12 @@ export class EditProfilePage {
     this.svc.updateProfile(this.currentUser.email, this.currentUser.name, this.currentUser.status_text, this.currentUser.password)
       .subscribe((res: any) => {
           if (!res.success) {
-            this.svc.toastMessage(res.error_message);
-
+            let toast = this.toastsAlertService.createToast(res.error_message);
+            toast.present();
           } else {
             this.events.publish('user:updated', this.currentUser, Date.now());
-            this.svc.toastMessage("Profile Updated");
+            let toast = this.toastsAlertService.createToast("Profile Updated");
+            toast.present();
 
             localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
             localStorage.setItem('active', 'show');
@@ -220,7 +218,7 @@ export class EditProfilePage {
 
 
   goToChangePassword() {
-    this.navCtrl.push(ChangePasswordPage);
+    this.navCtrl.push("ChangePasswordPage");
 
   }
 }

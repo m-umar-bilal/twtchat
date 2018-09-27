@@ -5,6 +5,7 @@ import { ChatWallpaperPage } from '../chat-wallpaper/chat-wallpaper';
 import { SettingsGroupsPage } from '../settings-groups/settings-groups';
 import { TwtchatPage } from '../twtchat/twtchat';
 import {environment} from "../../env";
+import {WelcomePage} from "../welcome/welcome";
 
 @IonicPage()
 @Component({
@@ -28,21 +29,34 @@ export class SettingsPage {
   }
 
   edit(){
-    this.navCtrl.push(EditProfilePage);
+    this.navCtrl.push("EditProfilePage");
   }
   wallpaper(){
-    this.navCtrl.push(ChatWallpaperPage);
+    this.navCtrl.push("ChatWallpaperPage");
   }
   settingGroups(){
-    this.navCtrl.push(SettingsGroupsPage);
+    this.navCtrl.push("SettingsGroupsPage");
   }
 
+
+  setAppRoot(rootPage) {
+    // this.app.getActiveNavs()[0].setRoot(rootPage);
+    var nav = this.app.getRootNavs()[0];
+    nav.popToRoot()
+      .then(() => {
+        nav.setRoot(rootPage);
+      });
+
+
+    // this.nav = this.app.getRootNavById('n4'); //WORKS! no console warning
+    // this.nav.setRoot(rootPage);
+  }
   logout(){
     localStorage.clear();
-    const root = this.app.getRootNav();
-    root.popToRoot();
+    this.setAppRoot("WelcomePage");
+
   }
   twtchat(){
-    this.navCtrl.push(TwtchatPage);
+    this.navCtrl.push("TwtchatPage");
   }
 }

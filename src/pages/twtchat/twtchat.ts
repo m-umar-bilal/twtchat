@@ -25,9 +25,9 @@ export class TwtchatPage {
     console.log('ionViewDidLoad TwtchatPage');
   }
   about(){
-    this.navCtrl.push(AboutPage);
+    this.navCtrl.push("AboutPage");
   }
   privatepoliy(){
-    this.navCtrl.push(PrivatePoliyPage);
+    this.navCtrl.push("PrivatePoliyPage");
   }
 }

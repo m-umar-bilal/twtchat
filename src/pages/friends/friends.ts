@@ -34,12 +34,12 @@ export class FriendsPage {
     console.log('ionViewDidLoad FriendsPage');
   }
 contactinfo(){
-  this.navCtrl.push(ContactInfoPage);
+  this.navCtrl.push("ContactInfoPage");
 }
 addfrinds(){
-  this.navCtrl.push(AddFriendsPage);
+  this.navCtrl.push("AddFriendsPage");
 }
 pendingfriends(){
-  this.navCtrl.push(PendingFriendsPage);
+  this.navCtrl.push("PendingFriendsPage");
 }
 }

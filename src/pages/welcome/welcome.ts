@@ -16,11 +16,10 @@ export class WelcomePage {
     platform.ready().then(() => {
 
       if (localStorage.getItem('currentUser')) {
-        this.navCtrl.push(TabsPage);
-
+        this.navCtrl.setRoot("TabsPage");
       }
       else {
-
+        // this.navCtrl.setRoot(WelcomePage);
       }
     });
   }
@@ -30,12 +29,12 @@ export class WelcomePage {
   }
 
   login() {
-    this.navCtrl.push(LoginPage);
+    this.navCtrl.push("LoginPage");
 
   }
 
   signup() {
-    this.navCtrl.push(SignupPage);
+    this.navCtrl.push("SignupPage");
   }
 
 }

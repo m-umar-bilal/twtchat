@@ -16,6 +16,6 @@ export class SettingsGroupsPage {
     console.log('ionViewDidLoad SettingsGroupsPage');
   }
   groupinfo(){
-  this.navCtrl.push(GroupInfoPage);
+  this.navCtrl.push("GroupInfoPage");
 }
 }
