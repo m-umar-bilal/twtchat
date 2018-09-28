@@ -294,6 +294,55 @@ export class RestService {
     );
   }
 
+  getOneGroup(email, password,query) {
+    const body = new HttpParams()
+      .set('email', email)
+      .set('group_id', query)
+      .set('password', password);
+
+    console.log(body.toString());
+    return this.http.post(this.serverURL + 'getOneGroup.php',
+
+      body.toString(),
+      {
+        headers: new HttpHeaders()
+          .set('Content-Type', 'application/x-www-form-urlencoded')
+      }
+    );
+  }
+  getOneProfil(email, password,query) {
+    const body = new HttpParams()
+      .set('email', email)
+      .set('user_two', query)
+      .set('password', password);
+
+    console.log(body.toString());
+    return this.http.post(this.serverURL + 'getOneProfil.php',
+
+      body.toString(),
+      {
+        headers: new HttpHeaders()
+          .set('Content-Type', 'application/x-www-form-urlencoded')
+      }
+    );
+  }
+  sendFriendRequest(email, password,query) {
+    const body = new HttpParams()
+      .set('email', email)
+      .set('user_two', query)
+      .set('password', password);
+
+    console.log(body.toString());
+    return this.http.post(this.serverURL + 'sendFriendRequest.php',
+
+      body.toString(),
+      {
+        headers: new HttpHeaders()
+          .set('Content-Type', 'application/x-www-form-urlencoded')
+      }
+    );
+  }
+
   sendChat(email, password, user_id_app, conversation_id, type_conversation, message, type_message, obj) {
     const body = new HttpParams()
       .set('email', email)
@@ -310,6 +359,42 @@ export class RestService {
       }
     );
   }
+
+
+  searchGroups(email, password, query) {
+    const body = new HttpParams()
+      .set('email', email)
+      .set('searchTxt', query)
+      .set('password', password);
+
+    console.log(body.toString());
+    return this.http.post(this.serverURL + 'searchGroups.php',
+
+      body.toString(),
+      {
+        headers: new HttpHeaders()
+          .set('Content-Type', 'application/x-www-form-urlencoded')
+      }
+    );
+  }
+
+  sendGroupRequest(email, password, query) {
+    const body = new HttpParams()
+      .set('email', email)
+      .set('group_id', query)
+      .set('password', password);
+
+    console.log(body.toString());
+    return this.http.post(this.serverURL + 'sendGroupRequest.php',
+
+      body.toString(),
+      {
+        headers: new HttpHeaders()
+          .set('Content-Type', 'application/x-www-form-urlencoded')
+      }
+    );
+  }
+
 
 
   public requestPOST(link, body) {

@@ -18,7 +18,8 @@
     <ion-list>
         <ion-item (click)="mystatus()">
             <ion-thumbnail item-start>
-              <img  [src]="serverURL+currentUser?.photoProfil||'../../assets/imgs/880.png'"  width="200px" />
+              <img *ngIf="currentUser?.photoProfil"  [src]="serverURL+currentUser?.photoProfil"  width="200px" />
+              <img *ngIf="!currentUser?.photoProfil" [src]="'../../assets/imgs/880.png'"  width="200px" />
 
           </ion-thumbnail>
           <h2>{{currentUser?.status_text}}</h2>

@@ -51,7 +51,7 @@ export class SignupEmailPage {
             toast.present();
           } else {
             localStorage.setItem('currentUser', JSON.stringify({
-              res, ...this.user,
+              ...res, ...this.user,
               password: encodeURIComponent(CryptoJS.MD5(this.user.password))
             }));
             localStorage.setItem('active', 'show');

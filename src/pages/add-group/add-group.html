@@ -2,7 +2,7 @@
 
   <ion-navbar>
       <ion-buttons end>
-          <button ion-button>Create</button>
+          <button ion-button (click)="uploadImage()">Create</button>
       </ion-buttons>
     <ion-title>Add a New Group</ion-title>
   </ion-navbar>
@@ -12,15 +12,17 @@
 
 <ion-content>
 
-  <img class="img" src="../../assets/imgs/logo.png" width="200px" />
+  <img class="img" (click)="presentActionSheet()" *ngIf="lastImage" src="{{previewImage()}}" width="200px" />
+
+  <img class="img" (click)="presentActionSheet()" *ngIf="!lastImage" src="../../assets/imgs/logo.png" width="200px" />
 
 
   <ion-list style="margin-top: 20px;">
       <ion-item>
-          <ion-input type="text" placeholder="Group Subject"></ion-input>
+          <ion-input type="text" name="subject" [(ngModel)]="subject" required placeholder="Group Subject"></ion-input>
       </ion-item>
       <ion-item>
-          <ion-input type="text" placeholder="Group Description"></ion-input>
+          <ion-input type="text" name="description" [(ngModel)]="description" required placeholder="Group Description"></ion-input>
       </ion-item>
   </ion-list>
 </ion-content>

@@ -12,10 +12,10 @@
 
     <div *ngFor="let msg of messages"
          class="message"
-         [class.left]=" msg.user_id !== currentUser.user_id "
-         [class.right]=" msg.user_id === currentUser.user_id ">
-      <img class="user-img" *ngIf="msg?.photo_profil" [src]="serverURL+msg?.directory+msg?.photo_profil||'../../assets/imgs/880.png'" alt="" src="">
-      <!--<img class="user-img" *ngIf="!msg?.photo_profil" [src]="'../../assets/imgs/880.png'" alt="" src="">-->
+         [class.left]=" msg.user_id+'' !== currentUser.user_id+'' "
+         [class.right]=" msg.user_id+'' === currentUser.user_id+'' ">
+      <img class="user-img" *ngIf="msg?.photo_profil" [src]="serverURL+msg?.directory+msg?.photo_profil" alt="" src="">
+      <img class="user-img" *ngIf="!msg?.photo_profil" [src]="'../../assets/imgs/880.png'" alt="" src="">
       <ion-spinner name="dots" *ngIf="msg.status === 'pending'"></ion-spinner>
       <div class="msg-detail">
         <div class="msg-info">

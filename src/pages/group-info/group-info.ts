@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import {IonicPage, Loading, LoadingController, NavController, NavParams} from 'ionic-angular';
+import {environment} from "../../env";
+import {RestService} from "../../services";
 
 /**
  * Generated class for the GroupInfoPage page.
@@ -14,12 +16,38 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
   templateUrl: 'group-info.html',
 })
 export class GroupInfoPage {
+  currentUser = JSON.parse(localStorage.getItem('currentUser'));
+  public serverURL: string = environment.API_URL;
+  private group_id: any;
+  groupData;
+  private loading: Loading;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, private svc: RestService, public loadingCtrl: LoadingController) {
+    this.group_id = navParams.get("id");
+    this.getGroup();
   }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad GroupInfoPage');
   }
+  getGroup() {
 
+    this.loading = this.loadingCtrl.create({
+      content: 'Loading...',
+    });
+    this.loading.present();
+    this.svc.getOneGroup(this.currentUser.email, this.currentUser.password, this.group_id).subscribe((data: any) => {
+      this.loading.dismissAll()
+
+      // this.searchGroups();
+      if(data.error_message===""){
+        this.groupData = data.group;
+      }
+    }, error2 => {
+      this.loading.dismissAll()
+
+      // this.searchGroups();
+
+    })
+  }
 }

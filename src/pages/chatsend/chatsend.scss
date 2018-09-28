@@ -1,3 +1,9 @@
+//.line-breaker {
+//  white-space: pre-line;
+//}
+//
+
+
 page-chatsend {
   $userBackgroundColor: #387ef5;
   $toUserBackgroundColor: #fff;
@@ -12,9 +18,6 @@ page-chatsend {
     height: 255px;
   }
 
-  .line-breaker {
-    white-space: pre-line;
-  }
 
   .input-wrap {
     padding: 5px;

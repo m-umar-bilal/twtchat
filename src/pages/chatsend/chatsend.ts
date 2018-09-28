@@ -31,33 +31,48 @@ export class ChatsendPage {
               private events: Events, private svc: RestService) {
     // Get the navParams toUserId parameter
     console.log(navParams)
-    this.groupData = navParams.data;
-
-    this.messages = this.groupData.messages.reverse();
-    this.toUser = {
-      id: navParams.get('toUserId'),
-      name: navParams.get('toUserName')
-    };
-    // Get mock user information
-    this.chatService.getUserInfo()
-      .then((res) => {
-        this.user = res
-      });
-
-    events.subscribe('chat:updated', (chat, time) => {
-      console.log(chat)
-      // user and time are the same arguments passed in `events.publish(user, time)`
 
 
-      chat.groups.filter(item => item.id === this.groupData.id)[0].messages.reverse().forEach((item) => {
-        if (this.messages.filter(i => i.unique_code === item.unique_code).length === 0) {
-          this.messages.push(item);
-          this.scrollToBottom();
+    if(this.navParams.get("page")==="groups") {
 
+      this.groupData = navParams.get("data");
+
+      try {
+        this.messages = this.groupData.messages.map(x => Object.assign({}, x));
+        this.messages = this.messages.reverse();
+
+      } catch (ex){
+        this.messages = [];
+      }
+      this.toUser = {
+        id: navParams.get('toUserId'),
+        name: navParams.get('toUserName')
+      };
+      // Get mock user information
+      this.chatService.getUserInfo()
+        .then((res) => {
+          this.user = res
+        });
+
+      events.subscribe('chat:updated', (chat, time) => {
+        console.log(chat)
+        // user and time are the same arguments passed in `events.publish(user, time)`
+
+        let msgs =chat.groups.filter(item => item.id === this.groupData.id)[0].messages;
+        if(msgs){
+          msgs.forEach((item) => {
+            if (this.messages.filter(i => i.unique_code === item.unique_code).length === 0) {
+              this.messages.push(item);
+              this.scrollToBottom();
+
+            }
+          });
+          console.log("updated");
         }
+
+
       });
-      console.log("updated");
-    });
+    }
   }
 
   ionViewWillLeave() {
@@ -141,8 +156,11 @@ export class ChatsendPage {
 
     // Mock message
     const id = new Date();
+    let newMsg;
+    if (this.currentUser.photoProfil) {
+
     let arr = this.currentUser.photoProfil.split('profil');
-    let newMsg = {
+    newMsg = {
 
 
       create_date: id,
@@ -151,11 +169,26 @@ export class ChatsendPage {
       mime: null,
       name: this.currentUser.name,
       name_file: null,
-      photo_profil: "profil"+arr[1],
+      photo_profil: "profil" + arr[1],
       type_message: "text",
-      unique_code: (id).getTime()+""+this.currentUser.user_id+""+this.groupData.id+""+this.groupData.private,
+      unique_code: (id).getTime() + "" + this.currentUser.user_id + "" + this.groupData.id + "" + this.groupData.private,
       user_id: this.currentUser.user_id,
     };
+  }
+  else {
+      newMsg = {
+
+
+        create_date: id,
+        message: this.editorMsg,
+        mime: null,
+        name: this.currentUser.name,
+        name_file: null,
+        type_message: "text",
+        unique_code: (id).getTime() + "" + this.currentUser.user_id + "" + this.groupData.id + "" + this.groupData.private,
+        user_id: this.currentUser.user_id,
+      };
+    }
     this.sendChat(this.editorMsg,newMsg.unique_code);
 
     this.messages.push(newMsg);
@@ -197,7 +230,7 @@ export class ChatsendPage {
 
   scrollToBottom() {
     setTimeout(() => {
-      if (this.content.scrollToBottom) {
+      if (this.content&&this.content._scroll&&this.content.scrollToBottom) {
         this.content.scrollToBottom();
       }
     }, 400)

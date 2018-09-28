@@ -1,6 +1,9 @@
-import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
-import { AddGroupPage } from '../add-group/add-group';
+import {Component} from '@angular/core';
+import {IonicPage, NavController, NavParams} from 'ionic-angular';
+import {AddGroupPage} from '../add-group/add-group';
+import {environment} from "../../env";
+import {RestService} from "../../services";
+import {FormControl} from "@angular/forms";
 
 /**
  * Generated class for the SearchGroupsPage page.
@@ -15,14 +18,60 @@ import { AddGroupPage } from '../add-group/add-group';
   templateUrl: 'search-groups.html',
 })
 export class SearchGroupsPage {
+  currentUser = JSON.parse(localStorage.getItem('currentUser'));
+  public serverURL: string = environment.API_URL;
+  searching: boolean;
+  query: any ="";
+  groups: any[] = [];
+  searchControl: FormControl;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, private svc: RestService) {
+    this.searchControl = new FormControl();
+  }
+
+  addgroups() {
+    this.navCtrl.push("AddGroupPage");
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad SearchGroupsPage');
+
+    this.searchGroups();
+
+    this.searchControl.valueChanges.debounceTime(700).subscribe(search => {
+
+      this.searchGroups();
+
+    });
+
+
   }
-  addgroups(){
-    this.navCtrl.push("AddGroupPage");
+
+  searchGroups() {
+    this.searching = true;
+
+    this.svc.searchGroups(this.currentUser.email, this.currentUser.password, this.query.toLowerCase()).subscribe((data: any) => {
+      this.searching = false;
+
+      if (data.error_message === "") {
+        this.groups = data.groups;
+      } else {
+        this.groups = [];
+      }
+    }, error2 => {
+      this.searching = false;
+
+      this.groups = [];
+
+    })
+  }
+
+  addGroup(id) {
+    this.searching = true;
+    this.svc.sendGroupRequest(this.currentUser.email, this.currentUser.password, id).subscribe((data: any) => {
+      this.searchGroups();
+    }, error2 => {
+      this.searchGroups();
+
+    })
   }
 }
