@@ -51,62 +51,64 @@ export class TabsPage {
   }
 
   getGroups() {
-    if(localStorage.getItem('currentUser')){
-    this.loading = this.loadingCtrl.create({
-      content: 'Loading...',
-    });
-    this.loading.present();
-    this.svc.getGroups(this.currentUser.email, this.currentUser.password)
-      .subscribe((res: any) => {
+    if (localStorage.getItem('currentUser')) {
+      this.loading = this.loadingCtrl.create({
+        content: 'Loading...',
+      });
+      this.loading.present();
+      this.svc.getGroups(this.currentUser.email, this.currentUser.password)
+        .subscribe((res: any) => {
 
-          this.loading.dismissAll();
+            this.loading.dismissAll();
 
-          if (res.error_message === "") {
-            localStorage.setItem("UserData", JSON.stringify(res));
-            this.svc.userData = res;
-            // console.log(res);
+            if (res.error_message === "") {
+              localStorage.setItem("UserData", JSON.stringify(res));
+              this.svc.userData = res;
+              // console.log(res);
 
-          } else {
+            } else {
 
-          }
-        },
-        err => {
-          // console.log(err);
-          this.loading.dismissAll()
+            }
+          },
+          err => {
+            // console.log(err);
+            this.loading.dismissAll()
 
-          if (err !== false) {
-            // let toast = this.toastsAlertService.createToast(err);
-            // toast.present();
-          }
-        })}
+            if (err !== false) {
+              // let toast = this.toastsAlertService.createToast(err);
+              // toast.present();
+            }
+          })
+    }
   }
 
 
   getGroups_() {
-if(localStorage.getItem('currentUser')){
-    this.svc.getGroups(this.currentUser.email, this.currentUser.password)
-      .subscribe((res: any) => {
+    if (localStorage.getItem('currentUser')) {
+      this.svc.getGroups(this.currentUser.email, this.currentUser.password)
+        .subscribe((res: any) => {
 
 
-          if (res.error_message === "") {
-            localStorage.setItem("UserData", JSON.stringify(res));
-            this.svc.userData = res;
-            this.events.publish('chat:updated', res, Date.now());
+            if (res.error_message === "") {
+              localStorage.setItem("UserData", JSON.stringify(res));
+              this.svc.userData = res;
+              this.events.publish('chat:updated', res, Date.now());
 
-            console.log(res);
+              console.log(res);
 
-          } else {
+            } else {
 
-          }
-        },
-        err => {
-          console.log(err);
+            }
+          },
+          err => {
+            console.log(err);
 
-          if (err !== false) {
-            // let toast = this.toastsAlertService.createToast(err);
-            // toast.present();
-          }
-        })
-  }}
+            if (err !== false) {
+              // let toast = this.toastsAlertService.createToast(err);
+              // toast.present();
+            }
+          })
+    }
+  }
 
 }

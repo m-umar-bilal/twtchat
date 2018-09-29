@@ -51,6 +51,7 @@ import {StreamingMedia} from "@ionic-native/streaming-media";
 
 import { Camera } from '@ionic-native/camera';
 import { Media } from '@ionic-native/media';
+import { IonicStorageModule } from '@ionic/storage'
 
 //PAGES
 
@@ -115,6 +116,7 @@ import {FileChooser} from "@ionic-native/file-chooser";
       tabsHideOnSubPages:true,
       preloadModules: true
     }),
+    IonicStorageModule.forRoot(),
     HttpClientModule,
     HttpModule
   ],
@@ -170,7 +172,7 @@ EmojiProvider,
     StreamingMedia,
     FileChooser,
     GooglePlus,
-    SplashScreen,Media,
+    SplashScreen,Media,Storage,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]
 })

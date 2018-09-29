@@ -8,9 +8,16 @@
 
 <ion-content>
 
+  <ion-infinite-scroll position="top" (ionInfinite)="doInfinite($event)">
+    <ion-infinite-scroll-content
+      loadingSpinner="bubbles"
+      loadingText="Loading more data...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+
   <div class="message-wrap">
 
-    <div *ngFor="let msg of messages"
+    <div *ngFor="let msg of pagedItems"
          class="message"
          [class.left]=" msg.user_id+'' !== currentUser.user_id+'' "
          [class.right]=" msg.user_id+'' === currentUser.user_id+'' ">

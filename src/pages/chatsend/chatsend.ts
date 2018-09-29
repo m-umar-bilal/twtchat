@@ -13,15 +13,17 @@ import {Transfer, TransferObject} from "@ionic-native/transfer";
 import {Camera} from "@ionic-native/camera";
 import {FilePath} from "@ionic-native/file-path";
 import {File, FileEntry} from "@ionic-native/file";
-import {CaptureVideoOptions, MediaCapture, CaptureError} from "@ionic-native/media-capture";
+import {CaptureVideoOptions, MediaCapture, CaptureError, MediaFile} from "@ionic-native/media-capture";
 import {StreamingMedia} from "@ionic-native/streaming-media";
 import {FileChooser} from "@ionic-native/file-chooser";
 import {DomSanitizer} from "@angular/platform-browser";
-import { Media, MediaObject } from '@ionic-native/media';
-import { Storage } from '@ionic/storage';
+import {Media, MediaObject} from '@ionic-native/media';
+import {Storage} from '@ionic/storage';
+import {PagerService} from "../../services/pager.service";
 
 declare var cordova: any;
 const MEDIA_FILES_KEY = 'mediaFiles';
+
 @IonicPage()
 @Component({
   selector: 'page-chatsend',
@@ -57,30 +59,56 @@ export class ChatsendPage {
   toUser: UserInfo;
   editorMsg = '';
   showEmojiPicker = false;
+  pageNumber: number = 1;
   currentUser = JSON.parse(localStorage.getItem('currentUser'));
   public serverURL: string = environment.API_URL;
   public groupData: any;
   public messages: any;
   private loading: Loading;
   private capturedImage: any;
+  showMessages;
   private lastImage: any;
+  pageSize = -10;
   loader: any;
   videoId: any;
   flag_upload = true;
   flag_play = true;
+  pagedItems: any[] = [];
+  pager: any = {};
 
   constructor(private sanitizer: DomSanitizer, public navParams: NavParams, public navCtrl: NavController, public streamingMedia: StreamingMedia, public fileChooser: FileChooser,
               private chatService: ChatService, public loadingCtrl: LoadingController,
               private events: Events, private svc: RestService, public actionSheetCtrl: ActionSheetController,
               private camera: Camera, private transfer: Transfer, private file: File, private filePath: FilePath,
-              public platform: Platform, private mediaCapture: MediaCapture,private storage: Storage,
-              private media: Media
-  ) {
+              public platform: Platform, private mediaCapture: MediaCapture, private storage: Storage, private pagerService: PagerService,
+              private media: Media) {
     // Get the navParams toUserId parameter
     console.log(navParams)
     this.forGroups();
 
 
+  }
+
+  setPage(page: number) {
+    console.log("called")
+    this.pager = this.pagerService.getPager(this.messages.length, page);
+
+    // get current page of items
+    if (page === 1) {
+      this.pagedItems.push(...this.messages.slice(this.pager.startIndex, this.pager.endIndex + 1).reverse());
+    } else {
+      this.pagedItems.unshift(...this.messages.slice(this.pager.startIndex, this.pager.endIndex + 1).reverse());
+    }
+    console.log(this.pager)
+    //   if (newPage) {
+    //
+    //     // console.log(newPage)
+    //     newPage.forEach((item) => {
+    //     this.pagedItems.push(item);
+    //       console.log(this.pagedItems)
+    //
+    //     });
+    // }
   }
 
   presentActionSheet() {
@@ -141,10 +169,12 @@ export class ChatsendPage {
           setTimeout(() => {
             try {
               this.messages = this.groupData.messages.map(x => Object.assign({}, x));
-              this.messages = this.messages.reverse();
+              // this.messages = this.messages.reverse();
+              this.setPage(1);
               this.loading.dismissAll();
             }
             catch (ex) {
+              console.log(ex)
               this.messages = [];
               this.loading.dismissAll();
 
@@ -177,6 +207,7 @@ export class ChatsendPage {
             msgs.forEach((item) => {
               if (this.messages.filter(i => i.unique_code === item.unique_code).length === 0) {
                 this.messages.push(item);
+                this.pagedItems.push(item);
                 this.scrollToBottom();
 
               }
@@ -308,6 +339,8 @@ export class ChatsendPage {
     this.sendChat(this.editorMsg, newMsg.unique_code);
 
     this.messages.push(newMsg);
+    this.pagedItems.push(newMsg);
+
     this.editorMsg = '';
     this.scrollToBottom();
 
@@ -334,15 +367,18 @@ export class ChatsendPage {
     // Verify user relationships
     if (msg.userId === userId && msg.toUserId === toUserId) {
       this.msgList.push(msg);
+      this.pagedItems.push(msg);
+      this.scrollToBottom();
+
     } else if (msg.toUserId === userId && msg.userId === toUserId) {
       this.msgList.push(msg);
     }
-    this.scrollToBottom();
   }
 
   getMsgIndexById(id: string) {
     return this.msgList.findIndex(e => e.messageId === id)
   }
+
   storeMediaFiles(files) {
     this.storage.get(MEDIA_FILES_KEY).then(res => {
       if (res) {
@@ -355,6 +391,7 @@ export class ChatsendPage {
       this.mediaFiles = this.mediaFiles.concat(files);
     })
   }
+
   captureAudio() {
     this.mediaCapture.captureAudio().then(res => {
       console.log(JSON.stringify(res));
@@ -362,7 +399,9 @@ export class ChatsendPage {
 
       // this.storeMediaFiles(res);
       // this.uploadAudio("audio",res);
-    }, (err: CaptureError) => console.error(err));
+    }, (err: CaptureError) => {
+      console.error(JSON.stringify(err))
+    });
   }
 
 
@@ -375,7 +414,7 @@ export class ChatsendPage {
     // }, 400)
     setTimeout(() => {
       element.scrollIntoView(true)
-    }, 0);
+    }, 400);
   }
 
   private focus() {
@@ -624,11 +663,13 @@ export class ChatsendPage {
       this.presentToast('Error while uploading file.');
     });
     this.messages.push(newMsg);
+    this.pagedItems.push(newMsg);
     this.scrollToBottom();
 
 
   }
-  public uploadAudio(type,localurl) {
+
+  public uploadAudio(type, localurl) {
 
     let url = this.serverURL + "messageFile.php";
 
@@ -702,17 +743,22 @@ export class ChatsendPage {
       this.presentToast('Error while uploading file.');
     });
     this.messages.push(newMsg);
+    this.pagedItems.push(newMsg);
     this.scrollToBottom();
 
 
   }
 
+  previewVideo() {
+    return window.localStorage.getItem('chatvideo');
+
+  }
 
   public uploadVideo(type) {
 
     let url = this.serverURL + "messageFile.php";
 
-    let targetPath = this.videoId;
+    let targetPath = this.file.dataDirectory + this.videoId;
 
     const id = new Date();
     let newMsg;
@@ -727,7 +773,7 @@ export class ChatsendPage {
         create_date: id,
         directory: arr[0],
         local: true,
-        message: this.videoId,
+        message: targetPath,
         mime: "video/mp4",
         name: this.currentUser.name,
         name_file: filename,
@@ -742,7 +788,7 @@ export class ChatsendPage {
 
         local: true,
         create_date: id,
-        message: this.videoId,
+        message: targetPath,
         mime: "video/mp4",
         name: this.currentUser.name,
         name_file: filename,
@@ -774,10 +820,10 @@ export class ChatsendPage {
 
     const fileTransfer: TransferObject = this.transfer.create();
 
-    console.log('Error while uploading file.');
-    console.log(this.videoId)
+    console.log('FAke while uploading file.');
+    console.log(targetPath)
     fileTransfer.upload(targetPath, url, options).then((data: any) => {
-
+      this.getGroups_();
       this.presentToast('Group Created Successfully.');
       console.log('Group Created Successfully.');
       console.log(JSON.stringify(data))
@@ -787,12 +833,53 @@ export class ChatsendPage {
       console.log('Error while uploading file.');
       console.log(JSON.stringify(err))
     });
-    this.messages.push(newMsg);
+    // this.messages.push(newMsg);
     this.scrollToBottom();
 
 
   }
 
+  getGroups_() {
+    if (localStorage.getItem('currentUser')) {
+      this.svc.getGroups(this.currentUser.email, this.currentUser.password)
+        .subscribe((res: any) => {
+
+
+            if (res.error_message === "") {
+              localStorage.setItem("UserData", JSON.stringify(res));
+              this.svc.userData = res;
+              this.events.publish('chat:updated', res, Date.now());
+
+              console.log(res);
+
+            } else {
+
+            }
+          },
+          err => {
+            console.log(err);
+
+            if (err !== false) {
+              // let toast = this.toastsAlertService.createToast(err);
+              // toast.present();
+            }
+          })
+    }
+  }
+
+  // startRecord() {
+  //   if (this.platform.is('ios')) {
+  //     this.fileName = 'record'+new Date().getDate()+new Date().getMonth()+new Date().getFullYear()+new Date().getHours()+new Date().getMinutes()+new Date().getSeconds()+'.3gp';
+  //     this.filePath = this.file.documentsDirectory.replace(/file:\/\//g, '') + this.fileName;
+  //     this.audio = this.media.create(this.filePath);
+  //   } else if (this.platform.is('android')) {
+  //     this.fileName = 'record'+new Date().getDate()+new Date().getMonth()+new Date().getFullYear()+new Date().getHours()+new Date().getMinutes()+new Date().getSeconds()+'.3gp';
+  //     this.filePath = this.file.externalDataDirectory.replace(/file:\/\//g, '') + this.fileName;
+  //     this.audio = this.media.create(this.filePath);
+  //   }
+  //   this.audio.startRecord();
+  //   this.recording = true;
+  // }
   public presentVideoActionSheet() {
     let actionSheet = this.actionSheetCtrl.create({
       title: "Select Image Source",
@@ -806,7 +893,7 @@ export class ChatsendPage {
         {
           text: "Use Camera",
           handler: () => {
-            this.capturevideo();
+            this.captureVideo();
           }
         },
         {
@@ -833,28 +920,54 @@ export class ChatsendPage {
       // if (this.platform.is('android')) {
       this.file.resolveLocalFilesystemUrl('file://' + imagePath,).then((FE: FileEntry) => {
 
-
         console.log("lasrimage")
         // console.log(  FE.isFile)
         FE.file(file => {
-          const FR = new FileReader()
-          FR.onloadend = (res: any) => {
-            let AF = res.target.result;
-            let blob = new Blob([new Uint8Array(AF)], {type: 'video/mp4'})
-            let videoUrl = window.URL.createObjectURL(blob);
-            this.videoId = videoUrl;
-            this.uploadVideo("video");
 
-          };
-          FR.readAsArrayBuffer(file);
+          // var reader = new FileReader();
+          // reader.onloadend = function (encodedFile: any) {
+          //   var src = encodedFile.target.result;
+          //   src = src.split("base64,");
+          //   var contentAsBase64EncodedString = src[1];
+          //   window.localStorage.setItem('chatvideo', 'data:image/jpeg;base64,' + contentAsBase64EncodedString);
+          //   console.log("contentAsBase64EncodedString");
+          // };
+          // reader.readAsDataURL(file);
+          //
+
+          let capturedFile = file;
+          let fileName = capturedFile.name;
+          let dir = capturedFile['localURL'].split('/');
+          dir.pop();
+          let fromDirectory = dir.join('/');
+          var toDirectory = this.file.dataDirectory;
+
+          this.file.copyFile(fromDirectory, fileName, toDirectory, fileName).then((res) => {
+            this.videoId = fileName;
+            this.uploadVideo('video');
+            // this.storeMediaFiles([{name: fileName, size: capturedFile.size}]);
+          }, err => {
+            console.log('err: ', err);
+          });
+          // const FR = new FileReader()
+          // FR.onloadend = (res: any) => {
+          //   let AF = res.target.result;
+          //   let blob = new Blob([new Uint8Array(AF)], {type: 'video/mp4'})
+          //   let videoUrl = window.URL.createObjectURL(blob);
+          //   this.videoId = videoUrl;
+          //
+          //   this.uploadVideo("video");
+          //
+          // };
+          // FR.readAsArrayBuffer(file);
+
         })
-
         // let correctPath = filePath.substr(0, filePath.lastIndexOf('/') + 1);
-        let currentName = imagePath.substring(imagePath.lastIndexOf('/') + 1, imagePath.lastIndexOf('?'));
-        let d = new Date();
-        let n = d.getTime()
-        console.log("YA Allah MADAD");
-        console.log(n + currentName);
+        // let currentName = imagePath.substring(imagePath.lastIndexOf('/') + 1, imagePath.lastIndexOf('?'));
+        // let d = new Date();
+        // let n = d.getTime()
+        // console.log("YA Allah MADAD");
+        // console.log(n + currentName);
         // this.copyFileToLocalDir(correctPath, currentName, n+currentName, "video");
       }, err => {
         console.log("nae chala");
@@ -892,7 +1005,46 @@ export class ChatsendPage {
       .catch(e => console.log(e));
   }
 
-  capturevideo() {
+
+  captureVideo() {
+    let options: CaptureVideoOptions = {
+      limit: 1,
+      duration: 30
+    }
+    this.mediaCapture.captureVideo(options).then((res: MediaFile[]) => {
+
+        let capturedFile = res[0];
+        // capturedFile.file(file => {
+        //
+        //   var reader = new FileReader();
+        //   reader.onloadend = function (encodedFile: any) {
+        //     var src = encodedFile.target.result;
+        //     src = src.split("base64,");
+        //     var contentAsBase64EncodedString = src[1];
+        //     window.localStorage.setItem('chatvideo', 'data:image/jpeg;base64,' + contentAsBase64EncodedString);
+        //     console.log("contentAsBase64EncodedString");
+        //   };
+        //   reader.readAsDataURL(file);
+        // })
+        let fileName = capturedFile.name;
+        let dir = capturedFile['localURL'].split('/');
+        dir.pop();
+        let fromDirectory = dir.join('/');
+        var toDirectory = this.file.dataDirectory;
+
+        this.file.copyFile(fromDirectory, fileName, toDirectory, fileName).then((res) => {
+          this.videoId = fileName;
+          this.uploadVideo('video');
+          // this.storeMediaFiles([{name: fileName, size: capturedFile.size}]);
+        }, err => {
+          console.log('err: ', err);
+        });
+      },
+      (err: CaptureError) => console.error(err));
+  }
+
+
+  capturevideo_() {
     let options: CaptureVideoOptions = {limit: 1};
     this.mediaCapture.captureVideo(options)
       .then((videodata: any[]) => {
@@ -969,5 +1121,25 @@ export class ChatsendPage {
     //   position: position
     // });
     // toast.present(toast);
+  }
+
+  doInfinite(scroll: any) {
+    console.log(this.pageNumber);
+    console.log(this.pager.totalPages);
+    if (this.pageNumber <= this.pager.totalPages) {
+
+
+      this.setPage(this.pageNumber++);
+      scroll.complete();
+
+    } else {
+      scroll.complete();
+
+    }
+    // if((this.pageSize*-1)<this.messages.length) {
+    //   this.pageSize = this.pageSize - 15;
+    // } else{
+
+    // }
   }
 }

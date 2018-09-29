@@ -31,9 +31,9 @@ export class LoginPage {
         nav.setRoot(rootPage).then(()=>{
           nav.popToRoot()
             .then(() => {
-              nav.setRoot(rootPage);
+              nav.setRoot(rootPage).catch(()=>{});
 
-            });
+            }).catch(()=>{});
         });
 
 
