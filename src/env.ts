@@ -4,6 +4,7 @@ export const environment = {
   // ENV: 'development',
   // API_URL: 'https://cs-backend.herokuapp.com',
   WS_URL: 'ws://twtchat.net/',
+  // API_URL: 'http://twtchat.zerocode.solutions/includes/'
   API_URL: 'http://twtchat.net/twtchat/includes/'
   // API_URL: 'http://192.168.100.12:3000'
 

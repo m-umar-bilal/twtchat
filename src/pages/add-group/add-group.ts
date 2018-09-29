@@ -181,6 +181,33 @@ export class AddGroupPage {
   //
   // var ft = new FileTransfer();
   // ft.upload(imageURI, encodeURI(url_serv+"changePhotoProfil.php"), winProfil, fail, options);
+
+  getGroups_() {
+    if(localStorage.getItem('currentUser')){
+      this.svc.getGroups(this.currentUser.email, this.currentUser.password)
+        .subscribe((res: any) => {
+
+
+            if (res.error_message === "") {
+              localStorage.setItem("UserData", JSON.stringify(res));
+              this.svc.userData = res;
+              this.events.publish('chat:updated', res, Date.now());
+
+              console.log(res);
+
+            } else {
+
+            }
+          },
+          err => {
+            console.log(err);
+
+            if (err !== false) {
+              // let toast = this.toastsAlertService.createToast(err);
+              // toast.present();
+            }
+          })
+    }}
   public uploadImage() {
     // Destination URL
     if (!this.lastImage) {
@@ -217,10 +244,13 @@ export class AddGroupPage {
 
       // Use the FileTransfer to upload the image
       fileTransfer.upload(targetPath, url, options).then((data: any) => {
+        this.getGroups_();
         this.loading.dismissAll()
 
         this.presentToast('Group Created Successfully.');
-        this.navCtrl.popTo("GroupsPage");
+        this.navCtrl.pop();
+
+        // this.navCtrl.popTo("GroupsPage");
       }, err => {
         this.loading.dismissAll()
         this.presentToast('Error while creating group.');

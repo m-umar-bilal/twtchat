@@ -26,10 +26,16 @@ export class LoginPage {
   setAppRoot(rootPage) {
     // this.app.getActiveNavs()[0].setRoot(rootPage);
     var nav = this.app.getRootNavs()[0];
-    nav.popToRoot()
-      .then(() => {
-        nav.setRoot(rootPage);
-      });
+
+
+        nav.setRoot(rootPage).then(()=>{
+          nav.popToRoot()
+            .then(() => {
+              nav.setRoot(rootPage);
+
+            });
+        });
+
 
 
     // this.nav = this.app.getRootNavById('n4'); //WORKS! no console warning
@@ -56,7 +62,7 @@ export class LoginPage {
         err => {
           console.log(err);
           if (err !== false) {
-            let toast = this.toastsAlertService.createToast(err);
+            let toast = this.toastsAlertService.createToast("Invalid email or password");
             toast.present();
           }
         })

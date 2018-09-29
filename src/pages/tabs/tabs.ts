@@ -51,6 +51,7 @@ export class TabsPage {
   }
 
   getGroups() {
+    if(localStorage.getItem('currentUser')){
     this.loading = this.loadingCtrl.create({
       content: 'Loading...',
     });
@@ -77,12 +78,12 @@ export class TabsPage {
             // let toast = this.toastsAlertService.createToast(err);
             // toast.present();
           }
-        })
+        })}
   }
 
 
   getGroups_() {
-
+if(localStorage.getItem('currentUser')){
     this.svc.getGroups(this.currentUser.email, this.currentUser.password)
       .subscribe((res: any) => {
 
@@ -106,6 +107,6 @@ export class TabsPage {
             // toast.present();
           }
         })
-  }
+  }}
 
 }

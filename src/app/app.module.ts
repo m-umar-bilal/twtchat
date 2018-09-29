@@ -43,11 +43,14 @@ import { StatusBar } from '@ionic-native/status-bar';
 // import { TouchID } from '@ionic-native/touch-id';
 import { SecureStorage } from '@ionic-native/secure-storage';
 // import { IOSFilePicker } from '@ionic-native/file-picker';
+import {MediaCapture} from "@ionic-native/media-capture";
 
+import {StreamingMedia} from "@ionic-native/streaming-media";
 
 //PRELOADER
 
 import { Camera } from '@ionic-native/camera';
+import { Media } from '@ionic-native/media';
 
 //PAGES
 
@@ -74,6 +77,7 @@ import {FilePath} from "@ionic-native/file-path";
 import {File} from "@ionic-native/file";
 import {TimeAgoPipe} from 'time-ago-pipe';
 import {EmojiProvider} from "../providers/emoji";
+import {FileChooser} from "@ionic-native/file-chooser";
 @NgModule({
   declarations: [
     MyApp,
@@ -156,14 +160,17 @@ import {EmojiProvider} from "../providers/emoji";
     Transfer,
     FilePath,
     SecureStorage,
+    MediaCapture,
     // File,
     CommonModalsService,
 EmojiProvider,
     ToastAlertsService,
     StatusBar,
     Facebook,
+    StreamingMedia,
+    FileChooser,
     GooglePlus,
-    SplashScreen,
+    SplashScreen,Media,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]
 })
