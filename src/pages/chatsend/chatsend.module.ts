@@ -6,7 +6,6 @@ import {EmojiPickerComponentModule} from "../../components/emoji-picker/emoji-pi
 import {ChatService} from "../../providers/chat-service";
 import {EmojiProvider} from "../../providers/emoji";
 import {ChatPageModule} from "../chat/chat.module";
-import {PagerService} from "../../services/pager.service";
 
 @NgModule({
   declarations: [
@@ -22,8 +21,7 @@ import {PagerService} from "../../services/pager.service";
   ],
   providers: [
     ChatService,
-    EmojiProvider,
-    PagerService
+    EmojiProvider
   ]
 })
 export class ChatsendPageModule {}

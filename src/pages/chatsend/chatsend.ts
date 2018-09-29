@@ -4,7 +4,6 @@ import {
   NavParams, Platform
 } from 'ionic-angular';
 import {ContactInfoPage} from '../contact-info/contact-info';
-import {ChatMessage, ChatService, UserInfo} from "../../providers/chat-service";
 import {environment} from "../../env";
 import {RestService} from "../../services";
 import {animate, state, style, transition, trigger} from "@angular/animations";
@@ -17,8 +16,7 @@ import {CaptureVideoOptions, MediaCapture, CaptureError, MediaFile} from "@ionic
 import {StreamingMedia} from "@ionic-native/streaming-media";
 import {FileChooser} from "@ionic-native/file-chooser";
 import {DomSanitizer} from "@angular/platform-browser";
-import {Media, MediaObject} from '@ionic-native/media';
-import {Storage} from '@ionic/storage';
+import {Media} from '@ionic-native/media';
 import {PagerService} from "../../services/pager.service";
 
 declare var cordova: any;
@@ -52,11 +50,8 @@ const MEDIA_FILES_KEY = 'mediaFiles';
 export class ChatsendPage {
 
   mediaFiles = [];
-  @ViewChild(Content) content: Content;
+  @ViewChild('content') content: Content;
   @ViewChild('chat_input') messageInput: ElementRef;
-  msgList: ChatMessage[] = [];
-  user: UserInfo;
-  toUser: UserInfo;
   editorMsg = '';
   showEmojiPicker = false;
   pageNumber: number = 1;
@@ -75,12 +70,13 @@ export class ChatsendPage {
   flag_play = true;
   pagedItems: any[] = [];
   pager: any = {};
+  private loading_: Loading;
 
-  constructor(private sanitizer: DomSanitizer, public navParams: NavParams, public navCtrl: NavController, public streamingMedia: StreamingMedia, public fileChooser: FileChooser,
-              private chatService: ChatService, public loadingCtrl: LoadingController,
+  constructor(public navParams: NavParams, public navCtrl: NavController,
+               public loadingCtrl: LoadingController,
               private events: Events, private svc: RestService, public actionSheetCtrl: ActionSheetController,
               private camera: Camera, private transfer: Transfer, private file: File, private filePath: FilePath,
-              public platform: Platform, private mediaCapture: MediaCapture, private storage: Storage, private pagerService: PagerService,
+              public platform: Platform, private mediaCapture: MediaCapture, private pagerService: PagerService,
               private media: Media) {
     // Get the navParams toUserId parameter
     console.log(navParams)
@@ -96,7 +92,9 @@ export class ChatsendPage {
     // get current page of items
     if (page === 1) {
       this.pagedItems.push(...this.messages.slice(this.pager.startIndex, this.pager.endIndex + 1).reverse());
+      this.scrollToBottom();
     } else {
+
       this.pagedItems.unshift(...this.messages.slice(this.pager.startIndex, this.pager.endIndex + 1).reverse());
     }
     console.log(this.pager)
@@ -170,7 +168,7 @@ export class ChatsendPage {
             try {
               this.messages = this.groupData.messages.map(x => Object.assign({}, x));
               // this.messages = this.messages.reverse();
-              this.setPage(1);
+              this.setPage(this.pageNumber);
               this.loading.dismissAll();
             }
             catch (ex) {
@@ -188,15 +186,6 @@ export class ChatsendPage {
           this.loading.dismissAll();
 
         }
-        this.toUser = {
-          id: this.navParams.get('toUserId'),
-          name: this.navParams.get('toUserName')
-        };
-        // Get mock user information
-        this.chatService.getUserInfo()
-          .then((res) => {
-            this.user = res
-          });
 
         this.events.subscribe('chat:updated', (chat, time) => {
           console.log(chat)
@@ -205,9 +194,12 @@ export class ChatsendPage {
           let msgs = chat.groups.filter(item => item.id === this.groupData.id)[0].messages;
           if (msgs) {
             msgs.forEach((item) => {
-              if (this.messages.filter(i => i.unique_code === item.unique_code).length === 0) {
+              if (this.messages.filter(i => i.unique_code === item.unique_code||(item.type_message==='text'&&item.message===i.message)).length === 0) {
                 this.messages.push(item);
                 this.pagedItems.push(item);
+                if(this.loading_){
+                  this.loading_.dismissAll();
+                }
                 this.scrollToBottom();
 
               }
@@ -217,6 +209,7 @@ export class ChatsendPage {
 
 
         });
+
       }
     }
   }
@@ -229,12 +222,8 @@ export class ChatsendPage {
 
   ionViewDidEnter() {
     //get message list
-    this.getMsg();
-
     // Subscribe to received  new message events
-    this.events.subscribe('chat:received', msg => {
-      this.pushNewMsg(msg);
-    })
+
   }
 
   onFocus() {
@@ -270,30 +259,12 @@ export class ChatsendPage {
         })
   }
 
-  switchEmojiPicker() {
-    this.showEmojiPicker = !this.showEmojiPicker;
-    if (!this.showEmojiPicker) {
-      this.focus();
-    } else {
-      this.setTextareaScroll();
-    }
-    this.content.resize();
-    this.scrollToBottom();
-  }
+
 
   /**
    * @name getMsg
    * @returns {Promise<ChatMessage[]>}
    */
-  getMsg() {
-    // Get mock message list
-    return this.chatService
-      .getMsgList()
-      .subscribe(res => {
-        this.msgList = res;
-        this.scrollToBottom();
-      });
-  }
 
   /**
    * @name sendMsg
@@ -361,36 +332,7 @@ export class ChatsendPage {
    * @name pushNewMsg
    * @param msg
    */
-  pushNewMsg(msg: ChatMessage) {
-    const userId = this.user.id,
-      toUserId = this.toUser.id;
-    // Verify user relationships
-    if (msg.userId === userId && msg.toUserId === toUserId) {
-      this.msgList.push(msg);
-      this.pagedItems.push(msg);
-      this.scrollToBottom();
 
-    } else if (msg.toUserId === userId && msg.userId === toUserId) {
-      this.msgList.push(msg);
-    }
-  }
-
-  getMsgIndexById(id: string) {
-    return this.msgList.findIndex(e => e.messageId === id)
-  }
-
-  storeMediaFiles(files) {
-    this.storage.get(MEDIA_FILES_KEY).then(res => {
-      if (res) {
-        let arr = JSON.parse(res);
-        arr = arr.concat(files);
-        this.storage.set(MEDIA_FILES_KEY, JSON.stringify(arr));
-      } else {
-        this.storage.set(MEDIA_FILES_KEY, JSON.stringify(files))
-      }
-      this.mediaFiles = this.mediaFiles.concat(files);
-    })
-  }
 
   captureAudio() {
     this.mediaCapture.captureAudio().then(res => {
@@ -414,7 +356,7 @@ export class ChatsendPage {
     // }, 400)
     setTimeout(() => {
       element.scrollIntoView(true)
-    }, 400);
+    }, 200);
   }
 
   private focus() {
@@ -833,17 +775,28 @@ export class ChatsendPage {
       console.log('Error while uploading file.');
       console.log(JSON.stringify(err))
     });
+    this.getGroups_();
     // this.messages.push(newMsg);
-    this.scrollToBottom();
+    // this.scrollToBottom();
 
 
   }
 
   getGroups_() {
     if (localStorage.getItem('currentUser')) {
+      if( !this.loading_){
+      this.loading_ = this.loadingCtrl.create({
+        content: 'Uploading...',
+      });
+        this.loading_.present();
+      }
+      else{
+        this.loading_.present();
+
+      }
       this.svc.getGroups(this.currentUser.email, this.currentUser.password)
         .subscribe((res: any) => {
-
+            // this.loading_.dismissAll();
 
             if (res.error_message === "") {
               localStorage.setItem("UserData", JSON.stringify(res));
@@ -867,19 +820,7 @@ export class ChatsendPage {
     }
   }
 
-  // startRecord() {
-  //   if (this.platform.is('ios')) {
-  //     this.fileName = 'record'+new Date().getDate()+new Date().getMonth()+new Date().getFullYear()+new Date().getHours()+new Date().getMinutes()+new Date().getSeconds()+'.3gp';
-  //     this.filePath = this.file.documentsDirectory.replace(/file:\/\//g, '') + this.fileName;
-  //     this.audio = this.media.create(this.filePath);
-  //   } else if (this.platform.is('android')) {
-  //     this.fileName = 'record'+new Date().getDate()+new Date().getMonth()+new Date().getFullYear()+new Date().getHours()+new Date().getMinutes()+new Date().getSeconds()+'.3gp';
-  //     this.filePath = this.file.externalDataDirectory.replace(/file:\/\//g, '') + this.fileName;
-  //     this.audio = this.media.create(this.filePath);
-  //   }
-  //   this.audio.startRecord();
-  //   this.recording = true;
-  // }
+
   public presentVideoActionSheet() {
     let actionSheet = this.actionSheetCtrl.create({
       title: "Select Image Source",
@@ -924,17 +865,6 @@ export class ChatsendPage {
         // console.log(  FE.isFile)
         FE.file(file => {
 
-          // var reader = new FileReader();
-          // reader.onloadend = function (encodedFile: any) {
-          //   var src = encodedFile.target.result;
-          //   src = src.split("base64,");
-          //   var contentAsBase64EncodedString = src[1];
-          //   window.localStorage.setItem('chatvideo', 'data:image/jpeg;base64,' + contentAsBase64EncodedString);
-          //   console.log("contentAsBase64EncodedString");
-          // };
-          // reader.readAsDataURL(file);
-          //
-
           let capturedFile = file;
           let fileName = capturedFile.name;
           let dir = capturedFile['localURL'].split('/');
@@ -949,53 +879,17 @@ export class ChatsendPage {
           }, err => {
             console.log('err: ', err);
           });
-          // const FR = new FileReader()
-          // FR.onloadend = (res: any) => {
-          //   let AF = res.target.result;
-          //   let blob = new Blob([new Uint8Array(AF)], {type: 'video/mp4'})
-          //   let videoUrl = window.URL.createObjectURL(blob);
-          //   this.videoId = videoUrl;
-          //
-          //   this.uploadVideo("video");
-          //
-          // };
-          // FR.readAsArrayBuffer(file);
+
 
         })
-        // let correctPath = filePath.substr(0, filePath.lastIndexOf('/') + 1);
-        // let currentName = imagePath.substring(imagePath.lastIndexOf('/') + 1, imagePath.lastIndexOf('?'));
-        // let d = new Date();
-        // let n = d.getTime()
-        // console.log("YA Allah MADAD");
-        // console.log(n + currentName);
-        // this.copyFileToLocalDir(correctPath, currentName, n+currentName, "video");
+
       }, err => {
         console.log("nae chala");
         console.log(JSON.stringify(err));
 
 
       });
-      // }
-      // else {
-      //   console.log("YA Allah MADAD");
-      //   console.log(imagePath);
-      //
-      //   let currentName = imagePath.substr(imagePath.lastIndexOf('/') + 1);
-      //   let correctPath = imagePath.substr(0, imagePath.lastIndexOf('/') + 1);
-      //   let d = new Date();
-      //   let n = d.getTime()
-      //   console.log("YA Allah MADAD");
-      //   console.log(n+currentName);
-      //   this.copyFileToLocalDir(correctPath, currentName, n+currentName, "video");
-      // }
-      // // this.videoId = imagePath;
-      // // this.flag_play = false;
-      // // this.flag_upload = false;
-      // // this.uploadVideo("video");
-      //
 
-
-      // }
     }, err => {
       console.log("YA Allah MADAD");
       console.log(JSON.stringify(err));
@@ -1014,18 +908,7 @@ export class ChatsendPage {
     this.mediaCapture.captureVideo(options).then((res: MediaFile[]) => {
 
         let capturedFile = res[0];
-        // capturedFile.file(file => {
-        //
-        //   var reader = new FileReader();
-        //   reader.onloadend = function (encodedFile: any) {
-        //     var src = encodedFile.target.result;
-        //     src = src.split("base64,");
-        //     var contentAsBase64EncodedString = src[1];
-        //     window.localStorage.setItem('chatvideo', 'data:image/jpeg;base64,' + contentAsBase64EncodedString);
-        //     console.log("contentAsBase64EncodedString");
-        //   };
-        //   reader.readAsDataURL(file);
-        // })
+
         let fileName = capturedFile.name;
         let dir = capturedFile['localURL'].split('/');
         dir.pop();
@@ -1044,102 +927,22 @@ export class ChatsendPage {
   }
 
 
-  capturevideo_() {
-    let options: CaptureVideoOptions = {limit: 1};
-    this.mediaCapture.captureVideo(options)
-      .then((videodata: any[]) => {
-        var i, path, len;
-        for (i = 0, len = videodata.length; i < len; i += 1) {
-          path = videodata[i].fullPath;
-// do something interesting with the file
-        }
-        this.videoId = path;
-        this.flag_play = false;
-        this.flag_upload = false;
-        this.uploadVideo("video");
-      });
-  }
 
-  getVideo_() {
-    this.fileChooser.open()
-      .then(uri => {
 
-        this.videoId = uri;
-
-        this.flag_play = false;
-        this.flag_upload = false;
-
-        this.uploadVideo("video");
-        // this.filePath.resolveNativePath(this.videoId).then((im)=>{
-        //   let path = 'file://'+ im;
-        //   console.log("balllayy")
-        //   console.log(im)
-        //   // this.file.resolveLocalFilesystemUrl(path).then((pp)=>{
-        //   //   console.log(JSON.stringify(pp));
-        //   // })   .catch(e => console.log(e+""));
-        //
-        // })   .catch(e => console.log(e+""));
-        // this.filePath.resolveNativePath('file://'+imagePath)
-
-        // resolveLocalFilesystemUrl
-      })
-      .catch(e => console.log(e + ""));
-  }
-
-//   uploadVideo() {
-//     const fileTransfer: TransferObject = this.transfer.create();
-//     let options1 = {
-//       fileKey: "video_upload_file",
-//     fileName: this.videoId,
-//       headers: {},
-//     mimeType: "multipart/form-data",
-//     params: { },
-//     chunkedMode: false
-//   };
-//     this.presentLoading();
-//     fileTransfer.upload(this.videoId, "localhost/demo/uploadVideo.php", options1)
-//   .then((data) => {
-//       // this.loader.dismissAll();
-//       // this.flag_upload = true;
-//       this.showToast("middle", "Video is uploaded Successfully!");
-//     }, (err) => {
-// // error
-//       alert("error " + JSON.stringify(err));
-//     });
-//   }
-  presentLoading() {
-    //   this.loader = this.loadingCtrl.create({
-    //     content: "Uploading…"
-    // });
-    //   this.loader.present();
-  }
-
-  showToast(position: string, message: string) {
-    // let toast = this.toastCtrl.create({
-    //   message: message,
-    //   duration: 3000,
-    //   position: position
-    // });
-    // toast.present(toast);
-  }
 
   doInfinite(scroll: any) {
     console.log(this.pageNumber);
     console.log(this.pager.totalPages);
-    if (this.pageNumber <= this.pager.totalPages) {
+    if (this.pageNumber < this.pager.totalPages) {
 
-
-      this.setPage(this.pageNumber++);
+      this.pageNumber++;
+      this.setPage(this.pageNumber);
       scroll.complete();
 
     } else {
       scroll.complete();
 
     }
-    // if((this.pageSize*-1)<this.messages.length) {
-    //   this.pageSize = this.pageSize - 15;
-    // } else{
 
-    // }
   }
 }

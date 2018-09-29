@@ -43,7 +43,7 @@ export class TabsPage {
     }
 
     //
-    this.sub = Observable.interval(10000)
+    this.sub = Observable.interval(1000)
       .subscribe((val) => {
         // console.log('called');
         this.getGroups_();

@@ -51,7 +51,6 @@ import {StreamingMedia} from "@ionic-native/streaming-media";
 
 import { Camera } from '@ionic-native/camera';
 import { Media } from '@ionic-native/media';
-import { IonicStorageModule } from '@ionic/storage'
 
 //PAGES
 
@@ -79,6 +78,7 @@ import {File} from "@ionic-native/file";
 import {TimeAgoPipe} from 'time-ago-pipe';
 import {EmojiProvider} from "../providers/emoji";
 import {FileChooser} from "@ionic-native/file-chooser";
+import {PagerService} from "../services";
 @NgModule({
   declarations: [
     MyApp,
@@ -116,7 +116,6 @@ import {FileChooser} from "@ionic-native/file-chooser";
       tabsHideOnSubPages:true,
       preloadModules: true
     }),
-    IonicStorageModule.forRoot(),
     HttpClientModule,
     HttpModule
   ],
@@ -155,6 +154,8 @@ import {FileChooser} from "@ionic-native/file-chooser";
     RestService,
     Device,
     UserService,
+    PagerService,
+
     // RequestService,
     CommonService,
     Camera,
@@ -172,7 +173,7 @@ EmojiProvider,
     StreamingMedia,
     FileChooser,
     GooglePlus,
-    SplashScreen,Media,Storage,
+    SplashScreen,Media,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]
 })

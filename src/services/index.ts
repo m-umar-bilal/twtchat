@@ -7,3 +7,4 @@ export * from './common-modals.service';
 export * from './toastAlerts.service';
 export * from './resume.service';
 
+export * from './pager.service';
