@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {App, IonicPage, NavController, NavParams} from 'ionic-angular';
+import {App, IonicPage, Loading, LoadingController, NavController, NavParams} from 'ionic-angular';
 import {TabsPage} from '../tabs/tabs';
 import {RestService, ToastAlertsService} from "../../services";
 import {ForgotPasswordPage} from "../forgot-password/forgot-password";
@@ -14,9 +14,10 @@ import * as CryptoJS from 'crypto-js';
 export class LoginPage {
 
   user = {email: '', password: ''};
+  private loading: Loading;
 
   constructor(    public app: App,
-                  public navCtrl: NavController, public navParams: NavParams, private svc: RestService, private toastsAlertService: ToastAlertsService) {
+                  public navCtrl: NavController, public navParams: NavParams,  public loadingCtrl: LoadingController,private svc: RestService, private toastsAlertService: ToastAlertsService) {
   }
 
   ionViewDidLoad() {
@@ -44,9 +45,14 @@ export class LoginPage {
 
   home() {
 
-
+    this.loading = this.loadingCtrl.create({
+      content: 'Loading...',
+    });
+    this.loading.present();
     this.svc.login(this.user.email, this.user.password)
       .subscribe(res => {
+          this.loading.dismissAll()
+
           if (!res.success) {
             let toast = this.toastsAlertService.createToast(res.error_message);
             toast.present();
@@ -60,6 +66,8 @@ export class LoginPage {
           }
         },
         err => {
+          this.loading.dismissAll()
+
           console.log(err);
           if (err !== false) {
             let toast = this.toastsAlertService.createToast("Invalid email or password");

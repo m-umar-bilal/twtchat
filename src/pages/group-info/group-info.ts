@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {IonicPage, Loading, LoadingController, NavController, NavParams} from 'ionic-angular';
+import {Events, IonicPage, Loading, LoadingController, NavController, NavParams} from 'ionic-angular';
 import {environment} from "../../env";
 import {RestService} from "../../services";
 
@@ -22,7 +22,12 @@ export class GroupInfoPage {
   groupData;
   private loading: Loading;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, private svc: RestService, public loadingCtrl: LoadingController) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, private svc: RestService, public loadingCtrl: LoadingController, public events: Events) {
+    events.subscribe('user:updated', (user, time) => {
+      // user and time are the same arguments passed in `events.publish(user, time)`
+      console.log('Welcome', user, 'at', time);
+      this.currentUser = user;
+    });
     this.group_id = navParams.get("id");
     this.getGroup();
   }

@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {IonicPage, NavController, NavParams} from 'ionic-angular';
+import {Events, IonicPage, NavController, NavParams} from 'ionic-angular';
 import {AddGroupPage} from '../add-group/add-group';
 import {environment} from "../../env";
 import {RestService} from "../../services";
@@ -25,8 +25,14 @@ export class SearchGroupsPage {
   groups: any[] = [];
   searchControl: FormControl;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, private svc: RestService) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, private svc: RestService,
+              public events: Events) {
     this.searchControl = new FormControl();
+    events.subscribe('user:updated', (user, time) => {
+      // user and time are the same arguments passed in `events.publish(user, time)`
+      console.log('Welcome', user, 'at', time);
+      this.currentUser = user;
+    });
   }
 
   addgroups() {

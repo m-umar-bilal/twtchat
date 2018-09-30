@@ -24,15 +24,18 @@
     <ion-spinner></ion-spinner>
   </div>
   <ion-list>
-    <ion-item *ngFor="let c of groups" navPush="GroupInfoPage"
-              [navParams]="c" >
-      <ion-avatar item-left>
+    <ion-item *ngFor="let c of groups"  >
+      <ion-avatar item-left navPush="GroupInfoPage"
+                  [navParams]="c">
         <img [src]="serverURL+c?.directory+c?.photo_url">
       </ion-avatar>
-      <h2>{{c.name}}  <button (tap)="addGroup(c.id)" style="float: right" color="secondary" ion-button  outline icon-only>
+      <h2> <span navPush="GroupInfoPage"
+                 [navParams]="c">{{c.name}}</span>
+        <button (tap)="addGroup(c.id)" style="float: right" color="secondary" ion-button  outline icon-only>
         <ion-icon name='add-circle' is-active="false"></ion-icon>
       </button></h2>
-      <p>{{c?.description}}</p>
+      <p navPush="GroupInfoPage"
+         [navParams]="c">{{c?.description}}</p>
 
     </ion-item>
   </ion-list>

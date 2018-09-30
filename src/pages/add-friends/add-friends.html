@@ -14,5 +14,28 @@
 
 
 <ion-content>
-  <ion-searchbar></ion-searchbar>
+  <ion-searchbar [(ngModel)]="query" [formControl]="searchControl"></ion-searchbar>
+  <div *ngIf="searching" class="spinner-container">
+    <ion-spinner></ion-spinner>
+  </div>
+  <ion-list>
+    <ion-item *ngFor="let c of groups"  >
+      <ion-avatar item-left navPush="ContactInfoPage"
+                  [navParams]="{id:c.id}"
+      >
+        <img *ngIf="c?.photo_profil" [src]="serverURL+c?.directory+c?.photo_profil">
+        <img *ngIf="!c?.photo_profil" [src]="'../../assets/imgs/880.png'" />
+
+      </ion-avatar>
+      <h2> <span navPush="GroupInfoPage"
+                 [navParams]="c">{{c.name}}</span>
+        <button (tap)="addGroup(c.id)" style="float: right" color="secondary" ion-button  outline icon-only>
+          <ion-icon name='add-circle' is-active="false"></ion-icon>
+        </button></h2>
+      <p  navPush="ContactInfoPage"
+          [navParams]="{id:c.id}"
+      >{{c?.status_text}}</p>
+
+    </ion-item>
+  </ion-list>
 </ion-content>

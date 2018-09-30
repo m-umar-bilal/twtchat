@@ -7,12 +7,33 @@
 <ion-header>
 
   <ion-navbar>
-    <ion-title>pending-friends</ion-title>
+    <ion-title>Pending Friends</ion-title>
   </ion-navbar>
 
 </ion-header>
 
 
 <ion-content padding>
+  <ion-list>
+    <ion-item *ngFor="let c of this.svc?.userData?.users_pending">
+      <ion-avatar item-left navPush="GroupInfoPage"
+                  [navParams]="c">
+        <img *ngIf="c?.photo_profil" [src]="serverURL+c?.directory+c?.photo_profil">
+        <img *ngIf="!c?.photo_profil" [src]="'../../assets/imgs/880.png'">
+      </ion-avatar>
+      <h2> <span navPush="ContactInfoPage"
+                 [navParams]="{id:c.user_id}"
+      >{{c.name}}</span>
+        <button style="float: right" color="primary" (tap)="acceptFriendRequest(c.user_id,'1')" ion-button outline icon-only>
+          <ion-icon name='ios-add-circle' is-active="false" ></ion-icon>
+        </button>
+        <button style="float: right" color="danger" (tap)="declineFriendRequest(c.user_id,'2')" ion-button outline icon-only>
+          <ion-icon name='ios-remove-circle' is-active="false"></ion-icon>
+        </button>
+      </h2>
+      <p navPush="ContactInfoPage"
+         [navParams]="{id:c.user_id}">{{c.name}} wants to be your friend</p>
 
+    </ion-item>
+  </ion-list>
 </ion-content>

@@ -44,6 +44,11 @@ export class AddGroupPage {
 
   constructor(private domSanitizer: DomSanitizer,public navCtrl: NavController, public navParams: NavParams, private svc: RestService, private toastsAlertService: ToastAlertsService, public events: Events, private camera: Camera, private transfer: Transfer, private file: File, private filePath: FilePath, public actionSheetCtrl: ActionSheetController, public platform: Platform, public loadingCtrl: LoadingController) {
     this.currentUser = JSON.parse(localStorage.getItem("currentUser"));
+    events.subscribe('user:updated', (user, time) => {
+      // user and time are the same arguments passed in `events.publish(user, time)`
+      console.log('Welcome', user, 'at', time);
+      this.currentUser = user;
+    });
   }
 
   ionViewDidLoad() {

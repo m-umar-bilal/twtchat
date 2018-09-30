@@ -21,6 +21,7 @@ import {environment} from "../../env";
 export class FriendsPage {
   currentUser = JSON.parse(localStorage.getItem('currentUser'));
   public serverURL: string = environment.API_URL;
+  terms: any;
   constructor(public navCtrl: NavController, public navParams: NavParams,
               public events: Events,public svc:RestService) {
     events.subscribe('user:updated', (user, time) => {

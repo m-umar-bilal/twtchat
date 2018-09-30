@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import {Events, IonicPage, NavController, NavParams} from 'ionic-angular';
+import {environment} from "../../env";
 
 /**
  * Generated class for the ChatWallpaperPage page.
@@ -14,8 +15,14 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
   templateUrl: 'chat-wallpaper.html',
 })
 export class ChatWallpaperPage {
-
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  currentUser = JSON.parse(localStorage.getItem('currentUser'));
+  public serverURL: string = environment.API_URL;
+  constructor(public navCtrl: NavController, public navParams: NavParams, public events: Events) {
+    events.subscribe('user:updated', (user, time) => {
+      // user and time are the same arguments passed in `events.publish(user, time)`
+      console.log('Welcome', user, 'at', time);
+      this.currentUser = user;
+    });
   }
 
   ionViewDidLoad() {

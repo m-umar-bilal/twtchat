@@ -342,6 +342,57 @@ export class RestService {
       }
     );
   }
+  acceptPendingGroupRequest(email, password,query,group_id) {
+    const body = new HttpParams()
+      .set('email', email)
+      .set('user_two', query)
+      .set('group_id', group_id)
+      .set('password', password);
+
+    console.log(body.toString());
+    return this.http.post(this.serverURL + 'acceptRequestGroup.php',
+
+      body.toString(),
+      {
+        headers: new HttpHeaders()
+          .set('Content-Type', 'application/x-www-form-urlencoded')
+      }
+    );
+  }
+  declinePendingGroupRequest(email, password,query,group_id) {
+    const body = new HttpParams()
+      .set('email', email)
+      .set('user_two', query)
+      .set('group_id', group_id)
+      .set('password', password);
+
+    console.log(body.toString());
+    return this.http.post(this.serverURL + 'declinedRequestGroup.php',
+
+      body.toString(),
+      {
+        headers: new HttpHeaders()
+          .set('Content-Type', 'application/x-www-form-urlencoded')
+      }
+    );
+  }
+  handlefriendRequest(email, password,query,status) {
+    const body = new HttpParams()
+      .set('email', email)
+      .set('user_two', query)
+      .set('status', status)
+      .set('password', password);
+
+    console.log(body.toString());
+    return this.http.post(this.serverURL + 'friendRequest.php',
+
+      body.toString(),
+      {
+        headers: new HttpHeaders()
+          .set('Content-Type', 'application/x-www-form-urlencoded')
+      }
+    );
+  }
 
   sendChat(email, password, user_id_app, conversation_id, type_conversation, message, type_message, obj) {
     const body = new HttpParams()
@@ -362,6 +413,39 @@ export class RestService {
 
 
   searchGroups(email, password, query) {
+    const body = new HttpParams()
+      .set('email', email)
+      .set('searchTxt', query)
+      .set('password', password);
+
+    console.log(body.toString());
+    return this.http.post(this.serverURL + 'searchGroups.php',
+
+      body.toString(),
+      {
+        headers: new HttpHeaders()
+          .set('Content-Type', 'application/x-www-form-urlencoded')
+      }
+    );
+  }
+  searchUsers(email, password, query) {
+    const body = new HttpParams()
+      .set('email', email)
+      .set('searchTxt', query)
+      .set('password', password);
+
+    console.log(body.toString());
+    return this.http.post(this.serverURL + 'searchUsers.php',
+
+      body.toString(),
+      {
+        headers: new HttpHeaders()
+          .set('Content-Type', 'application/x-www-form-urlencoded')
+      }
+    );
+  }
+
+  searchFriends(email, password, query) {
     const body = new HttpParams()
       .set('email', email)
       .set('searchTxt', query)
