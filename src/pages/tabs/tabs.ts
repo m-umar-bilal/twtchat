@@ -42,12 +42,12 @@ export class TabsPage {
       this.getGroups();
     }
 
-    //
-    // this.sub = Observable.interval(5000)
-    //   .subscribe((val) => {
-    //     // console.log('called');
-    //     this.getGroups_();
-    //   });
+
+    this.sub = Observable.interval(5000)
+      .subscribe((val) => {
+        // console.log('called');
+        this.getGroups_();
+      });
   }
 
   getGroups() {

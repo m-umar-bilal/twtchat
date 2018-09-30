@@ -75,10 +75,10 @@ export class ChatsendPage {
   recording: any;
 
 
-  // filePathA: string;
-  // fileNameA: string;
-  // audio: MediaObject;
-  // audioList: any[] = [];
+  filePathA: string;
+  fileNameA: string;
+  audio: MediaObject;
+  audioList: any[] = [];
 
 
   curr_playing_file: MediaObject;
@@ -216,7 +216,7 @@ export class ChatsendPage {
           let msgs = chat.groups.filter(item => item.id === this.groupData.id)[0].messages;
           if (msgs) {
             msgs.forEach((item) => {
-              if (this.messages.filter(i => i.unique_code === item.unique_code || (item.type_message === 'text' && item.message === i.message)).length === 0) {
+              if (this.messages.filter(i => i.unique_code === item.unique_code).length === 0) {
                 this.messages.push(item);
                 this.pagedItems.push(item);
                 if (this.loading_) {
@@ -282,7 +282,7 @@ export class ChatsendPage {
           let msgs = chat.privates.filter(item => item.id === this.groupData.id)[0].messages;
           if (msgs) {
             msgs.forEach((item) => {
-              if (this.messages.filter(i => i.unique_code === item.unique_code || (item.type_message === 'text' && item.message === i.message)).length === 0) {
+              if (this.messages.filter(i => i.unique_code === item.unique_code).length === 0) {
                 this.messages.push(item);
                 this.pagedItems.push(item);
                 if (this.loading_) {
@@ -1000,7 +1000,7 @@ export class ChatsendPage {
       numstr = numstr + 1;
     }
     //Create media file
-    this.curfilename = 'audio' + numstr + '.3gp';
+    this.curfilename = 'audio' + numstr + '.m4a';
     this.curr_playing_file = this.createAudioFile(this.curfilename);
     localStorage.setItem('recordvoiceNum', numstr.toString());
     try {
@@ -1099,16 +1099,20 @@ export class ChatsendPage {
 
     const fileTransfer: TransferObject = this.transfer.create();
 
+
+
+    console.log("helloooooooo")
     fileTransfer.upload(targetPath, url, options).then((data: any) => {
+      console.log(JSON.stringify(data))
 
       this.presentToast('Group Created Successfully.');
 
     }, err => {
       this.presentToast('Error while uploading file.');
     });
-    this.messages.push(newMsg);
-    this.pagedItems.push(newMsg);
-    this.scrollToBottom();
+    // this.messages.push(newMsg);
+    // this.pagedItems.push(newMsg);
+    // this.scrollToBottom();
 
 
   }
@@ -1122,7 +1126,7 @@ export class ChatsendPage {
         //stop recording
 
         this.recording = false;
-        let name = 'record' + new Date().getDate() + new Date().getMonth() + new Date().getFullYear() + new Date().getHours() + new Date().getMinutes() + new Date().getSeconds() + '.3gp';
+        let name = 'record' + new Date().getDate() + new Date().getMonth() + new Date().getFullYear() + new Date().getHours() + new Date().getMinutes() + new Date().getSeconds() + '.m4a';
         ;
 
         let url = this.serverURL + "messageFile.php";
@@ -1142,7 +1146,7 @@ export class ChatsendPage {
             directory: arr[0],
             local: true,
             message: this.file.externalRootDirectory + this.curfilename,
-            mime: "audio/mp4",
+            mime: "audio/x-m4a",
             name: this.currentUser.name,
             name_file: name,
             photo_profil: "profil" + arr[1],
@@ -1157,7 +1161,7 @@ export class ChatsendPage {
             local: true,
             create_date: id,
             message: this.file.externalRootDirectory + this.curfilename,
-            mime: "audio/mp4",
+            mime: "audio/x-m4a",
             name: this.currentUser.name,
             name_file: name,
             type_message: type,
@@ -1195,6 +1199,7 @@ export class ChatsendPage {
 
         this.curr_playing_file.stopRecord();
         this.curr_playing_file.release();
+        // this.curr_playing_file.play();
         console.log('released');
 
         // let option: FileUploadOptions = {
@@ -1207,8 +1212,19 @@ export class ChatsendPage {
         const fileTransfer: TransferObject = this.transfer.create();
 
         console.log('filename' + this.curfilename);
+        console.log('filename'+ this.file.externalRootDirectory + this.curfilename);
+        let path = this.file.externalRootDirectory + this.curfilename;
 
-        fileTransfer.upload(this.file.externalRootDirectory + this.curfilename, url, options).then((result) => {
+
+        this.loading_ = this.loadingCtrl.create({
+          content: 'Uploading...',
+        });
+        this.loading_.present();
+
+        fileTransfer.upload(path, url, options).then((result) => {
+          this.loading_.dismissAll();
+          this.recordingInput = false;
+          this.getGroups_();
 
 
           console.log(JSON.stringify(result));
@@ -1221,42 +1237,57 @@ export class ChatsendPage {
           console.log(error.message);
           this.recStart = false;
         });
-        this.messages.push(newMsg);
-        this.pagedItems.push(newMsg);
-        this.scrollToBottom();
+        // this.messages.push(newMsg);
+        // this.pagedItems.push(newMsg);
+        // this.scrollToBottom();
       }
       catch (error) {
         console.log('stoperror');
         console.log(error.message);
       }
-    }, 500);
+    }, 0);
 
   }
 
 
-  // startRecord() {
-  //   if (this.platform.is('ios')) {
-  //     this.fileNameA = 'record'+new Date().getDate()+new Date().getMonth()+new Date().getFullYear()+new Date().getHours()+new Date().getMinutes()+new Date().getSeconds()+'.3gp';
-  //     this.filePathA = this.file.documentsDirectory.replace(/file:\/\//g, '') + this.fileNameA;
-  //     this.audio = this.media.create(this.filePathA);
-  //   } else if (this.platform.is('android')) {
-  //     this.fileNameA = 'record'+new Date().getDate()+new Date().getMonth()+new Date().getFullYear()+new Date().getHours()+new Date().getMinutes()+new Date().getSeconds()+'.3gp';
-  //     this.filePathA = this.file.externalDataDirectory.replace(/file:\/\//g, '') + this.fileNameA;
-  //     this.audio = this.media.create(this.filePathA);
-  //   }
-  //   this.audio.startRecord();
-  //   this.recording = true;
-  // }
-  // playAudio(file,idx) {
-  //   if (this.platform.is('ios')) {
-  //     this.filePathA = this.file.documentsDirectory.replace(/file:\/\//g, '') + file;
-  //     this.audio = this.media.create(this.filePathA);
-  //   } else if (this.platform.is('android')) {
-  //     this.filePathA = this.file.externalDataDirectory.replace(/file:\/\//g, '') + file;
-  //     this.audio = this.media.create(this.filePathA);
-  //   }
-  //   this.audio.play();
-  //   this.audio.setVolume(0.8);
-  // }
+  startRecord() {
+    if (this.platform.is('ios')) {
+      this.fileNameA = 'record'+new Date().getDate()+new Date().getMonth()+new Date().getFullYear()+new Date().getHours()+new Date().getMinutes()+new Date().getSeconds()+'.3gp';
+      this.filePathA = this.file.documentsDirectory.replace(/file:\/\//g, '') + this.fileNameA;
+      this.audio = this.media.create(this.filePathA);
+    } else if (this.platform.is('android')) {
+      this.fileNameA = 'record'+new Date().getDate()+new Date().getMonth()+new Date().getFullYear()+new Date().getHours()+new Date().getMinutes()+new Date().getSeconds()+'.3gp';
+      this.filePathA = this.file.externalDataDirectory.replace(/file:\/\//g, '') + this.fileNameA;
+      this.audio = this.media.create(this.filePathA);
+    }
+    this.audio.startRecord();
+    this.recording = true;
+  }
+
+  stopRecord() {
+    this.audio.stopRecord();
+    let data = { filename: this.fileNameA };
+    this.audioList.push(data);
+    localStorage.setItem("audiolist", JSON.stringify(this.audioList));
+    this.recording = false;
+    console.log(this.playAudio(this.fileNameA,0));
+    this.uploadAudio('audio',this.playAudio('file://'+this.fileNameA,0));
+    // this.getAudioList();
+  }
+  playAudio(file,idx):string {
+    if (this.platform.is('ios')) {
+      this.filePathA = this.file.documentsDirectory.replace(/file:\/\//g, '') + file;
+      this.audio = this.media.create(this.filePathA);
+    } else if (this.platform.is('android')) {
+      this.filePathA = this.file.externalDataDirectory.replace(/file:\/\//g, '') + file;
+      this.audio = this.media.create(this.filePathA);
+    }
+    console.log("audio");
+    console.log(JSON.stringify(this.audio))
+    this.audio.play();
+    this.audio.setVolume(0.8);
+    return this.filePathA;
+
+  }
 
 }

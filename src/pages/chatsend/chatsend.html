@@ -99,8 +99,8 @@
   <!--<ion-card>-->
     <!--<ion-card-content>-->
       <!--<ion-card-title>-->
-        <button ion-button primary (click)="pressed()" *ngIf="recording"><ion-icon name="mic-off"></ion-icon>&nbsp;&nbsp;Stop Record</button>
-        <button ion-button primary (click)="release()" *ngIf="!recording"><ion-icon name="mic"></ion-icon>&nbsp;&nbsp;Start Record</button>
+        <button ion-button primary (click)="released()" *ngIf="recording"><ion-icon name="mic-off"></ion-icon>&nbsp;&nbsp;Stop Record</button>
+        <button ion-button primary (click)="pressed()" *ngIf="!recording"><ion-icon name="mic"></ion-icon>&nbsp;&nbsp;Start Record</button>
       <!--</ion-card-title>-->
     <!--</ion-card-content>-->
   <!--</ion-card>-->
