@@ -74,7 +74,8 @@
           <span class="triangle"></span>
           <div class="line-breaker " >
           <audio controls>
-            <source [src]='serverURL+msg?.directory+msg?.message' [type]="msg?.mime">
+            <source *ngIf="!msg?.local" [src]='serverURL+msg?.directory+msg?.message' [type]="msg?.mime">
+            <source *ngIf="msg?.local"  src="{{msg?.message}}" [type]="msg?.mime">
             <!--<source src="horse.mp3" type="audio/mpeg">-->
           </audio>
 
@@ -93,7 +94,18 @@
 </ion-content>
 
 <ion-footer no-border [style.height]="showEmojiPicker ? '255px' : '55px'">
-  <div class="input-wrap">
+  <div class="input-wrap" *ngIf="recordingInput">
+
+  <!--<ion-card>-->
+    <!--<ion-card-content>-->
+      <!--<ion-card-title>-->
+        <button ion-button primary (click)="pressed()" *ngIf="recording"><ion-icon name="mic-off"></ion-icon>&nbsp;&nbsp;Stop Record</button>
+        <button ion-button primary (click)="release()" *ngIf="!recording"><ion-icon name="mic"></ion-icon>&nbsp;&nbsp;Start Record</button>
+      <!--</ion-card-title>-->
+    <!--</ion-card-content>-->
+  <!--</ion-card>-->
+  </div>
+  <div class="input-wrap" *ngIf="!recordingInput">
     <button ion-button clear icon-only item-right (click)="presentActionSheet()">
       <ion-icon name="attach"></ion-icon>
     </button>
