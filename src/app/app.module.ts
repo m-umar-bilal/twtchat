@@ -51,7 +51,7 @@ import {StreamingMedia} from "@ionic-native/streaming-media";
 
 import { Camera } from '@ionic-native/camera';
 import { Media } from '@ionic-native/media';
-
+import { VideoEditor } from '@ionic-native/video-editor';
 //PAGES
 
 //MODULES
@@ -79,6 +79,8 @@ import {TimeAgoPipe} from 'time-ago-pipe';
 import {EmojiProvider} from "../providers/emoji";
 import {FileChooser} from "@ionic-native/file-chooser";
 import {PagerService} from "../services";
+import {VideoPlayer} from "@ionic-native/video-player";
+import {PhotoViewer} from "@ionic-native/photo-viewer";
 @NgModule({
   declarations: [
     MyApp,
@@ -164,6 +166,9 @@ import {PagerService} from "../services";
     FilePath,
     SecureStorage,
     MediaCapture,
+    VideoEditor,
+    VideoPlayer,
+    PhotoViewer,
     // File,
     CommonModalsService,
 EmojiProvider,

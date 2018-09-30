@@ -21,7 +21,7 @@ export class SearchGroupsPage {
   currentUser = JSON.parse(localStorage.getItem('currentUser'));
   public serverURL: string = environment.API_URL;
   searching: boolean;
-  query: any ="";
+  query: any = "";
   groups: any[] = [];
   searchControl: FormControl;
 

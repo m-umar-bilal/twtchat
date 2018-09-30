@@ -73,7 +73,7 @@ export class ChatsendPage {
   private loading_: Loading;
 
   constructor(public navParams: NavParams, public navCtrl: NavController,
-               public loadingCtrl: LoadingController,
+              public loadingCtrl: LoadingController,
               private events: Events, private svc: RestService, public actionSheetCtrl: ActionSheetController,
               private camera: Camera, private transfer: Transfer, private file: File, private filePath: FilePath,
               public platform: Platform, private mediaCapture: MediaCapture, private pagerService: PagerService,
@@ -86,7 +86,7 @@ export class ChatsendPage {
     // Get the navParams toUserId parameter
     console.log(navParams)
     this.forGroups();
-
+    this.forPrivateChat();
 
   }
 
@@ -199,10 +199,10 @@ export class ChatsendPage {
           let msgs = chat.groups.filter(item => item.id === this.groupData.id)[0].messages;
           if (msgs) {
             msgs.forEach((item) => {
-              if (this.messages.filter(i => i.unique_code === item.unique_code||(item.type_message==='text'&&item.message===i.message)).length === 0) {
+              if (this.messages.filter(i => i.unique_code === item.unique_code || (item.type_message === 'text' && item.message === i.message)).length === 0) {
                 this.messages.push(item);
                 this.pagedItems.push(item);
-                if(this.loading_){
+                if (this.loading_) {
                   this.loading_.dismissAll();
                 }
                 this.scrollToBottom();
@@ -215,6 +215,71 @@ export class ChatsendPage {
 
         });
 
+      }
+
+    }
+  }
+
+  async forPrivateChat() {
+
+    if (this.navParams.get("page") === "private") {
+
+      if (this.svc.userData.privates) {
+
+        try {
+          this.loading = this.loadingCtrl.create({
+            content: 'Loading...',
+          });
+          this.loading.present();
+          this.groupData = this.svc.userData.privates.filter((item) => item.user_id === this.navParams.get("user_id"))[0];
+
+          setTimeout(() => {
+            try {
+              this.messages = this.groupData.messages.map(x => Object.assign({}, x));
+              // this.messages = this.messages.reverse();
+              this.setPage(this.pageNumber);
+              this.loading.dismissAll();
+            }
+            catch (ex) {
+              console.log(ex)
+              this.messages = [];
+              this.loading.dismissAll();
+
+            }
+
+          }, 0);
+
+
+        }
+        catch
+          (ex) {
+          this.messages = [];
+          this.loading.dismissAll();
+
+        }
+
+        this.events.subscribe('chat:updated', (chat, time) => {
+          console.log(chat)
+          // user and time are the same arguments passed in `events.publish(user, time)`
+
+          let msgs = chat.privates.filter(item => item.id === this.groupData.id)[0].messages;
+          if (msgs) {
+            msgs.forEach((item) => {
+              if (this.messages.filter(i => i.unique_code === item.unique_code || (item.type_message === 'text' && item.message === i.message)).length === 0) {
+                this.messages.push(item);
+                this.pagedItems.push(item);
+                if (this.loading_) {
+                  this.loading_.dismissAll();
+                }
+                this.scrollToBottom();
+
+              }
+            });
+            console.log("updated");
+          }
+
+
+        });
       }
     }
   }
@@ -238,8 +303,13 @@ export class ChatsendPage {
   }
 
   sendChat(message, obj) {
-
-    this.svc.sendChat(this.currentUser.email, this.currentUser.password, this.currentUser.user_id, this.groupData.id, this.groupData.private, message, "text", obj)
+    let ty;
+    if (this.navParams.get("page") === "private") {
+      ty = "0";
+    } else {
+      ty = "1";
+    }
+    this.svc.sendChat(this.currentUser.email, this.currentUser.password, this.currentUser.user_id, this.groupData.id, ty, message, "text", obj)
       .subscribe((res: any) => {
 
 
@@ -263,7 +333,6 @@ export class ChatsendPage {
           }
         })
   }
-
 
 
   /**
@@ -376,7 +445,13 @@ export class ChatsendPage {
   }
 
   contactinfo() {
-    this.navCtrl.push("ContactInfoPage");
+    if (this.navParams.get("page") === "private") {
+      this.navCtrl.push("ContactInfoPage", {id: this.groupData.user_id});
+    } else {
+      this.navCtrl.push("GroupInfoPage", this.groupData);
+
+    }
+
   }
 
 
@@ -579,10 +654,16 @@ export class ChatsendPage {
         user_id: this.currentUser.user_id,
       };
     }
+    let ty;
+    if (this.navParams.get("page") === "private") {
+      ty = "0";
+    } else {
+      ty = "1";
+    }
 
     let postData = {
       conversation_id: this.groupData.id,
-      type_conversation: "1",
+      type_conversation: ty,
       type_message: type,
       unique_code: newMsg.unique_code
     };
@@ -659,10 +740,16 @@ export class ChatsendPage {
         user_id: this.currentUser.user_id,
       };
     }
+    let ty;
+    if (this.navParams.get("page") === "private") {
+      ty = "0";
+    } else {
+      ty = "1";
+    }
 
     let postData = {
       conversation_id: this.groupData.id,
-      type_conversation: "1",
+      type_conversation: ty,
       type_message: type,
       unique_code: newMsg.unique_code
     };
@@ -744,10 +831,15 @@ export class ChatsendPage {
         user_id: this.currentUser.user_id,
       };
     }
-
+    let ty;
+    if (this.navParams.get("page") === "private") {
+      ty = "0";
+    } else {
+      ty = "1";
+    }
     let postData = {
       conversation_id: this.groupData.id,
-      type_conversation: "1",
+      type_conversation: ty,
       type_message: type,
       unique_code: newMsg.unique_code
     };
@@ -769,7 +861,12 @@ export class ChatsendPage {
 
     console.log('FAke while uploading file.');
     console.log(targetPath)
+    this.loading_ = this.loadingCtrl.create({
+      content: 'Uploading...',
+    });
+    this.loading_.present();
     fileTransfer.upload(targetPath, url, options).then((data: any) => {
+      this.loading_.dismissAll();
       this.getGroups_();
       this.presentToast('Group Created Successfully.');
       console.log('Group Created Successfully.');
@@ -780,7 +877,7 @@ export class ChatsendPage {
       console.log('Error while uploading file.');
       console.log(JSON.stringify(err))
     });
-    this.getGroups_();
+    // this.getGroups_();
     // this.messages.push(newMsg);
     // this.scrollToBottom();
 
@@ -789,13 +886,16 @@ export class ChatsendPage {
 
   getGroups_() {
     if (localStorage.getItem('currentUser')) {
-      if( !this.loading_){
-      this.loading_ = this.loadingCtrl.create({
-        content: 'Uploading...',
-      });
+      if (!this.loading_) {
+        this.loading_ = this.loadingCtrl.create({
+          content: 'Uploading...',
+        });
         this.loading_.present();
       }
-      else{
+      else {
+        this.loading_ = this.loadingCtrl.create({
+          content: 'Uploading...',
+        });
         this.loading_.present();
 
       }
@@ -930,9 +1030,6 @@ export class ChatsendPage {
       },
       (err: CaptureError) => console.error(err));
   }
-
-
-
 
 
   doInfinite(scroll: any) {

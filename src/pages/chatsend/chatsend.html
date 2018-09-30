@@ -53,8 +53,8 @@
           <span class="triangle"></span>
 
           <div class="line-breaker" >
-            <video *ngIf="!msg?.local" [src]="serverURL+msg?.directory+msg?.message" playsinline looped preload="auto" class="centerme" controls="controls" autoplay></video>
-          <video *ngIf="msg?.local" [src]="sanitizer.bypassSecurityTrustUrl(msg?.message)" playsinline looped preload="auto" class="centerme" controls="controls" autoplay>
+            <video  width="300" height="300" *ngIf="!msg?.local" [src]="serverURL+msg?.directory+msg?.message" playsinline looped preload="auto" class="centerme" controls="controls" autoplay></video>
+          <video  width="300" height="300" *ngIf="msg?.local" [src]="sanitizer.bypassSecurityTrustUrl(msg?.message)" playsinline looped preload="auto" class="centerme" controls="controls" autoplay>
             <!--<source [src]='serverURL+msg?.directory+msg?.message' type='video/mp4'>-->
           </video>
           </div>

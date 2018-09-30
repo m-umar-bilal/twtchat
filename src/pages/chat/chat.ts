@@ -27,4 +27,8 @@ export class ChatPage {
 chatsend(){
   this.navCtrl.push("ChatsendPage");
 }
+
+  deleteChat() {
+
+  }
 }

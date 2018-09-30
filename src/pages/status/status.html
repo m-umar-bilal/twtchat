@@ -18,10 +18,14 @@
     <ion-list>
         <ion-item (click)="mystatus()">
             <ion-thumbnail item-start>
-              <img *ngIf="currentUser?.photoProfil"  [src]="serverURL+currentUser?.photoProfil"  width="200px" />
-              <img *ngIf="!currentUser?.photoProfil" [src]="'../../assets/imgs/880.png'"  width="200px" />
-
+              <img *ngIf="currentUser?.photoProfil&&!this.svc.userData.myStatus"  [src]="serverURL+currentUser?.photoProfil"  width="200px" />
+              <img *ngIf="!currentUser?.photoProfil&&!this.svc.userData.myStatus" [src]="'../../assets/imgs/880.png'"  width="200px" />
+              <img class="img" *ngIf="this.svc.userData.myStatus&&this.svc.userData.myStatus[0].status_type==='photo'" src="{{serverURL+this.svc.userData.myStatus[0]?.directory+this.svc.userData.myStatus[0]?.status_url}}" width="200px" />
+              <video class="img" height="80px" *ngIf="this.svc.userData.myStatus&&this.svc.userData.myStatus[0].status_type==='video'" [src]="serverURL+this.svc.userData.myStatus[0]?.directory+this.svc.userData.myStatus[0]?.status_url" width="80px" ></video>
           </ion-thumbnail>
+
+          <!--*ngIf="friend?.messages"-->
+
           <h2>{{currentUser?.status_text}}</h2>
           <!--<p style="margin-top: 10px;">7 hours ago</p>-->
           <ion-icon name="arrow-forward" item-end></ion-icon>
@@ -29,30 +33,19 @@
     </ion-list>
 
     <p style="color:#bdbdbd;margin-left: 15px;">SNAPS FRIENDS</p>
-    <ion-list>
-        <ion-item>
-            <ion-thumbnail item-start>
-          <img class="img" src="../../assets/imgs/880.png" width="200px" />
-          </ion-thumbnail>
-          <h2>Mohammed</h2>
-          <p style="margin-top: 10px;">3 hours ago</p>
-        </ion-item>
+    <ion-list *ngIf="this.svc.userData.status">
+      <ion-item *ngFor="let snap of svc.userData.status">
+        <ion-thumbnail item-start>
+          <img class="img" (tap)="showImage(serverURL+snap?.directory+snap?.status_url)" *ngIf="snap.status_type==='photo'" src="{{serverURL+snap?.directory+snap?.status_url}}" width="200px" />
 
-        <ion-item>
-            <ion-thumbnail item-start>
-          <img class="img" src="../../assets/imgs/880.png" width="200px" />
-          </ion-thumbnail>
-          <h2>Ahmed</h2>
-          <p style="margin-top: 10px;">5 hours ago</p>
-        </ion-item>
 
-        <ion-item>
-            <ion-thumbnail item-start>
-          <img class="img" src="../../assets/imgs/880.png" width="200px" />
-          </ion-thumbnail>
-          <h2>Rawan</h2>
-          <p style="margin-top: 10px;">6 hours ago</p>
-        </ion-item>
+
+          <video (tap)="showVideo(serverURL+snap?.directory+snap?.status_url)" class="img" height="80px" *ngIf="snap.status_type==='video'" [src]="serverURL+snap?.directory+snap?.status_url" width="80px" ></video>
+        </ion-thumbnail>
+        <p style="margin-top: 10px;">7 hours ago{{snap|timeAgo}}</p>
+        <!--<ion-icon style="color: #ff0000" name="remove-circle" (click)="removeStatus(snap.id)" item-end></ion-icon>-->
+      </ion-item>
+
     </ion-list>
 
 </ion-content>

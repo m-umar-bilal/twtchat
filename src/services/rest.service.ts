@@ -394,10 +394,27 @@ export class RestService {
     );
   }
 
+  deleteSnap(email, password,status) {
+    const body = new HttpParams()
+      .set('email', email)
+      .set('status_id', status)
+      .set('password', password);
+
+    console.log(body.toString());
+    return this.http.post(this.serverURL + 'deleteStatus.php',
+
+      body.toString(),
+      {
+        headers: new HttpHeaders()
+          .set('Content-Type', 'application/x-www-form-urlencoded')
+      }
+    );
+  }
+
   sendChat(email, password, user_id_app, conversation_id, type_conversation, message, type_message, obj) {
     const body = new HttpParams()
       .set('email', email)
-      .set('array_messages', JSON.stringify([{conversation_id, type_conversation:"1", message, type_message, unique_code:obj}]))
+      .set('array_messages', JSON.stringify([{conversation_id, type_conversation:type_conversation, message, type_message, unique_code:obj}]))
       .set('password', password);
 
     console.log(body.toString());

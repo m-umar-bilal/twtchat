@@ -10,7 +10,8 @@
 <ion-content>
   <ion-list>
 
-    <ion-item-sliding *ngFor="let friend of svc.userData?.privates" (ionSwipe)="delete" (click)="chatsend()">
+    <ion-item-sliding *ngFor="let friend of svc.userData?.privates" navPush="ChatsendPage"
+                      [navParams]="{page:'private',user_id:friend.user_id}">
       <ion-item>
         <ion-thumbnail item-start>
           <img *ngIf="friend?.photo_profil"
@@ -21,7 +22,7 @@
 
 
         <p *ngIf="friend?.messages" style="margin-top: 10px;">
-          {{friend?.messages[friend.messages.length-1]?.message}}</p>
+          {{friend?.messages[0]?.message}}</p>
         <p *ngIf="friend.messages==null" style="margin-top: 10px;"></p>
         <p item-end *ngIf="friend?.unread" style="margin-top: -30px; margin-right: -30px;">{{friend?.date_lastMessage|
           timeAgo}}</p>
@@ -31,7 +32,7 @@
       </ion-item>
       <ion-item-options>
 
-        <button on-click="goToPage10()" ion-button color="danger">
+        <button (click)="chatsend()" ion-button color="danger">
           <ion-icon style="font-size: 40px;" name="trash"></ion-icon>
           Delete
         </button>
