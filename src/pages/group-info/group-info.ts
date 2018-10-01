@@ -447,13 +447,11 @@ export class GroupInfoPage {
 
       this.getGroup();
 
-      this.presentToast('Group Created Successfully.');
-      this.navCtrl.pop();
+      this.presentToast('Updated');
 
-      // this.navCtrl.popTo("GroupsPage");
     }, err => {
       this.loading.dismissAll()
-      this.presentToast('Error while creating group.');
+      this.presentToast('Error while uploading');
     });
   }
 
