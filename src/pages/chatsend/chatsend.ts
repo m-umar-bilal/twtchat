@@ -73,7 +73,7 @@ export class ChatsendPage {
   private loading_: Loading;
   recordingInput: any;
   recording: any;
-  bgImage: any="../../assets/imgs/bg.jpg";
+  bgImage: any="../../assets/imgs/bg1.jpg";
 
 
   filePathA: string;
