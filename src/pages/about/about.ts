@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import {Component} from '@angular/core';
+import {IonicPage, NavController, NavParams} from 'ionic-angular';
+
+declare let cordova: any;
 
 /**
  * Generated class for the AboutPage page.
@@ -22,4 +24,11 @@ export class AboutPage {
     console.log('ionViewDidLoad AboutPage');
   }
 
+  openUrl(url) {
+
+    //alert(url);
+
+    cordova.InAppBrowser.open(encodeURI(url), '_system', 'location=yes');
+
+  }
 }
