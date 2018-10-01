@@ -14,6 +14,7 @@ import {SearchPipe} from "../../pipes/search-groups/search-groups";
 
     IonicPageModule.forChild(FriendsPage),
   ],
+  exports:[SearchPipe]
 })
 export class FriendsPageModule {
 }

@@ -11,77 +11,76 @@
 
 
     <ion-searchbar
-    [(ngModel)]="myInput"
-    [showCancelButton]="shouldShowCancel"
-    (ionInput)="onInput($event)"
-    (ionCancel)="onCancel($event)">
+      [(ngModel)]="terms">
   </ion-searchbar>
 
   <ion-list>
-      <ion-item-sliding (click)="itemDetails" (ionSwipe)="delete" (click)="groupinfo()">
-          <ion-item> 
+    <div *ngFor="let group of this.svc.userData.groups| search : terms">
+      <ion-item-sliding *ngIf="group.private==='1'" navPush="GroupInfoPage"
+                        [navParams]="group" >
+          <ion-item>
               <ion-thumbnail item-start>
-                  <img src="../../assets/imgs/880.png" width="200px" />
-                  </ion-thumbnail>
-                  <h2 class="center">Group 1</h2>
-                  <p style="margin-top: 10px;">Hello</p>
+                <img [src]="serverURL+group?.directory+group?.photo_url||'../../assets/imgs/880.png'" width="200px"/>
+              </ion-thumbnail>
+                  <h2 class="center">{{group?.name}}</h2>
+                  <p style="margin-top: 10px;">{{group?.description}}</p>
           </ion-item>
           <ion-item-options>
               <button on-click="goToPage10()" ion-button color="danger"><ion-icon style="font-size: 40px;" name="trash"></ion-icon>Delete</button>
            </ion-item-options>
          </ion-item-sliding>
+    </div>
+      <!--<ion-item-sliding (click)="itemDetails" (ionSwipe)="delete">-->
+          <!--<ion-item> -->
+              <!--<ion-thumbnail item-start>-->
+                  <!--<img src="../../assets/imgs/880.png" width="200px" />-->
+                  <!--</ion-thumbnail>-->
+                  <!--<h2 class="center">Group 2</h2>-->
+                  <!--<p style="margin-top: 10px;">Hello</p>-->
+          <!--</ion-item>-->
+          <!--<ion-item-options>-->
+              <!--<button on-click="goToPage10()" ion-button color="danger"><ion-icon style="font-size: 40px;" name="trash"></ion-icon>Delete</button>-->
+           <!--</ion-item-options>-->
+         <!--</ion-item-sliding>-->
 
-      <ion-item-sliding (click)="itemDetails" (ionSwipe)="delete">
-          <ion-item> 
-              <ion-thumbnail item-start>
-                  <img src="../../assets/imgs/880.png" width="200px" />
-                  </ion-thumbnail>
-                  <h2 class="center">Group 2</h2>
-                  <p style="margin-top: 10px;">Hello</p>
-          </ion-item>
-          <ion-item-options>
-              <button on-click="goToPage10()" ion-button color="danger"><ion-icon style="font-size: 40px;" name="trash"></ion-icon>Delete</button>
-           </ion-item-options>
-         </ion-item-sliding>
+      <!--<ion-item-sliding (click)="itemDetails" (ionSwipe)="delete">-->
+          <!--<ion-item> -->
+              <!--<ion-thumbnail item-start>-->
+                  <!--<img src="../../assets/imgs/880.png" width="200px" />-->
+                  <!--</ion-thumbnail>-->
+                  <!--<h2 class="center">Group 3</h2>-->
+                  <!--<p style="margin-top: 10px;">Hello</p>-->
+          <!--</ion-item>-->
+          <!--<ion-item-options>-->
+              <!--<button on-click="goToPage10()" ion-button color="danger"><ion-icon style="font-size: 40px;" name="trash"></ion-icon>Delete</button>-->
+           <!--</ion-item-options>-->
+         <!--</ion-item-sliding>-->
 
-      <ion-item-sliding (click)="itemDetails" (ionSwipe)="delete">
-          <ion-item> 
-              <ion-thumbnail item-start>
-                  <img src="../../assets/imgs/880.png" width="200px" />
-                  </ion-thumbnail>
-                  <h2 class="center">Group 3</h2>
-                  <p style="margin-top: 10px;">Hello</p>
-          </ion-item>
-          <ion-item-options>
-              <button on-click="goToPage10()" ion-button color="danger"><ion-icon style="font-size: 40px;" name="trash"></ion-icon>Delete</button>
-           </ion-item-options>
-         </ion-item-sliding>
+      <!--<ion-item-sliding (click)="itemDetails" (ionSwipe)="delete">-->
+          <!--<ion-item> -->
+              <!--<ion-thumbnail item-start>-->
+                  <!--<img src="../../assets/imgs/880.png" width="200px" />-->
+                  <!--</ion-thumbnail>-->
+                  <!--<h2 class="center">Group 4</h2>-->
+                  <!--<p style="margin-top: 10px;">Hello</p>-->
+          <!--</ion-item>-->
+          <!--<ion-item-options>-->
+              <!--<button on-click="goToPage10()" ion-button color="danger"><ion-icon style="font-size: 40px;" name="trash"></ion-icon>Delete</button>-->
+           <!--</ion-item-options>-->
+         <!--</ion-item-sliding>-->
 
-      <ion-item-sliding (click)="itemDetails" (ionSwipe)="delete">
-          <ion-item> 
-              <ion-thumbnail item-start>
-                  <img src="../../assets/imgs/880.png" width="200px" />
-                  </ion-thumbnail>
-                  <h2 class="center">Group 4</h2>
-                  <p style="margin-top: 10px;">Hello</p>
-          </ion-item>
-          <ion-item-options>
-              <button on-click="goToPage10()" ion-button color="danger"><ion-icon style="font-size: 40px;" name="trash"></ion-icon>Delete</button>
-           </ion-item-options>
-         </ion-item-sliding>
-
-      <ion-item-sliding (click)="itemDetails" (ionSwipe)="delete">
-          <ion-item> 
-              <ion-thumbnail item-start>
-                  <img src="../../assets/imgs/880.png" width="200px" />
-                  </ion-thumbnail>
-                  <h2 class="center">Group 5</h2>
-                  <p style="margin-top: 10px;">Hello</p>
-          </ion-item>
-          <ion-item-options>
-              <button on-click="goToPage10()" ion-button color="danger"><ion-icon style="font-size: 40px;" name="trash"></ion-icon>Delete</button>
-           </ion-item-options>
-         </ion-item-sliding>
+      <!--<ion-item-sliding (click)="itemDetails" (ionSwipe)="delete">-->
+          <!--<ion-item> -->
+              <!--<ion-thumbnail item-start>-->
+                  <!--<img src="../../assets/imgs/880.png" width="200px" />-->
+                  <!--</ion-thumbnail>-->
+                  <!--<h2 class="center">Group 5</h2>-->
+                  <!--<p style="margin-top: 10px;">Hello</p>-->
+          <!--</ion-item>-->
+          <!--<ion-item-options>-->
+              <!--<button on-click="goToPage10()" ion-button color="danger"><ion-icon style="font-size: 40px;" name="trash"></ion-icon>Delete</button>-->
+           <!--</ion-item-options>-->
+         <!--</ion-item-sliding>-->
   </ion-list>
 
 

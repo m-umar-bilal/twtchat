@@ -73,6 +73,7 @@ export class ChatsendPage {
   private loading_: Loading;
   recordingInput: any;
   recording: any;
+  bgImage: any="../../assets/imgs/bg.jpg";
 
 
   filePathA: string;
@@ -92,10 +93,18 @@ export class ChatsendPage {
               private camera: Camera, private transfer: Transfer, private file: File, private filePath: FilePath,
               public platform: Platform, private mediaCapture: MediaCapture, private pagerService: PagerService,
               private media: Media) {
+
+    if(localStorage.getItem('wallimg' + this.currentUser.user_id)){
+      this.bgImage = localStorage.getItem('wallimg' + this.currentUser.user_id)
+    }
     events.subscribe('user:updated', (user, time) => {
       // user and time are the same arguments passed in `events.publish(user, time)`
       console.log('Welcome', user, 'at', time);
       this.currentUser = user;
+    });
+    events.subscribe('wallpaper:updated', (wallpaper, time) => {
+
+      this.bgImage = wallpaper
     });
     // Get the navParams toUserId parameter
     console.log(navParams)

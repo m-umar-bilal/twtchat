@@ -12,36 +12,36 @@
 
   <img [src]="serverURL+groupData?.directory+groupData?.photo_url" width="100%" height="300px">
 
-  <ion-item class="blur">
+  <ion-item class="blur" *ngIf="admin" (tap)="presentActionSheet()">
     <ion-icon style="font-size: 45px;margin-top: 0px;color:#ffffff;-webkit-text-stroke: 1px #000000;" name="camera"
               item-end></ion-icon>
   </ion-item>
 
   <ion-list style="margin-top: -10px;">
 
-    <ion-item>
+    <ion-item (tap)="presentNamePrompt(groupData)">
       <h2>{{groupData?.name}}</h2>
       <ion-icon name="arrow-forward" item-end></ion-icon>
     </ion-item>
 
-    <ion-item>
+    <ion-item (tap)="presentDescriptionPrompt(groupData)">
       <h2>{{groupData?.description}}</h2>
       <ion-icon name="arrow-forward" item-end></ion-icon>
     </ion-item>
 
-    <!--<ion-item style="padding-top: 2px;padding-bottom: 2px;">-->
-    <!--<ion-label>Read-Only</ion-label>-->
-    <!--<ion-toggle [(ngModel)]="pepperoni"></ion-toggle>-->
-    <!--</ion-item>-->
+    <ion-item *ngIf="admin" style="padding-top: 2px;padding-bottom: 2px;">
+    <ion-label>Read-Only</ion-label>
+    <ion-toggle [(ngModel)]="isToggled" (ionChange)="changeNoti()"></ion-toggle>
+    </ion-item>
   </ion-list>
 
   <p style="padding: 5px;color: #b3b3b3;">1 PARTICIPANTS</p>
 
   <ion-list style="margin-top: -10px;">
-    <!--<ion-item>-->
-    <!--<h2> Add Participants</h2>-->
-    <!--<ion-icon style="font-size: 40px;" name="add" item-start></ion-icon>-->
-    <!--</ion-item>-->
+    <ion-item *ngIf="admin" (click)="addParticipant()">
+    <h2> Add Participants</h2>
+    <ion-icon style="font-size: 40px;" name="add" item-start></ion-icon>
+    </ion-item>
 
     <ion-item *ngFor="let user of groupData.users" navPush="ContactInfoPage"
               [navParams]="user">
@@ -49,7 +49,14 @@
         <img width="200px" *ngIf="user?.photo_profil" [src]="serverURL+user?.directory+user?.photo_profil" alt="" src="">
         <img width="200px" *ngIf="!user?.photo_profil" [src]="'../../assets/imgs/880.png'" alt="" src="">
       </ion-thumbnail>
-      <h2>{{user.name}}</h2>
+      <h2>{{user.name}}        <button style="float: right" color="primary" *ngIf="admin&&currentUser.user_id!=user.id"
+                                       (tap)="deleteFromGroup(user)" ion-button outline icon-only>
+        <ion-icon name='trash' is-active="false"></ion-icon>
+      </button>
+        <button style="float: right" color="danger" *ngIf="admin&&currentUser.user_id!=user.id"
+                (tap)="blockFromGroup(user)" ion-button outline icon-only>
+          <ion-icon name='remove-circle' is-active="false"></ion-icon>
+        </button></h2>
       <p>{{user.status_text}}</p>
     </ion-item>
 
@@ -60,6 +67,9 @@
     <!--<h2>Faisal</h2>-->
     <!--<p>Desc</p>-->
     <!--</ion-item>-->
+
   </ion-list>
+  <button *ngIf="!admin" (click)="leaveGroup()" ion-button color="danger">Exit Group</button>
+
 
 </ion-content>

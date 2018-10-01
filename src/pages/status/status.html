@@ -42,7 +42,7 @@
 
           <video (tap)="showVideo(serverURL+snap?.directory+snap?.status_url)" class="img" height="80px" *ngIf="snap.status_type==='video'" [src]="serverURL+snap?.directory+snap?.status_url" width="80px" ></video>
         </ion-thumbnail>
-        <p style="margin-top: 10px;">7 hours ago{{snap|timeAgo}}</p>
+        <p style="margin-top: 10px;">{{snap.create_date|timeAgo}}</p>
         <!--<ion-icon style="color: #ff0000" name="remove-circle" (click)="removeStatus(snap.id)" item-end></ion-icon>-->
       </ion-item>
 

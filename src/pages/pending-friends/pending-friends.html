@@ -16,8 +16,8 @@
 <ion-content padding>
   <ion-list>
     <ion-item *ngFor="let c of this.svc?.userData?.users_pending">
-      <ion-avatar item-left navPush="GroupInfoPage"
-                  [navParams]="c">
+      <ion-avatar item-left navPush="ContactInfoPage"
+                  [navParams]="{id:c.id}">
         <img *ngIf="c?.photo_profil" [src]="serverURL+c?.directory+c?.photo_profil">
         <img *ngIf="!c?.photo_profil" [src]="'../../assets/imgs/880.png'">
       </ion-avatar>

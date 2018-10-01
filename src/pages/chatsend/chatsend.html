@@ -5,10 +5,10 @@
   </ion-navbar>
 
 </ion-header>
+<!--,'background-size':'100%'-->
+<ion-content #content style="background-size:cover;-webkit-background-origin:border;" [ngStyle]="{'background': 'url(' + bgImage + ') no-repeat'}">
 
-<ion-content #content>
-
-  <ion-infinite-scroll position="top" (ionInfinite)="doInfinite($event)">
+  <ion-infinite-scroll position="top"  (ionInfinite)="doInfinite($event)">
     <ion-infinite-scroll-content
       loadingSpinner="bubbles"
       loadingText="Loading more data...">

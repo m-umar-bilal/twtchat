@@ -410,6 +410,22 @@ export class RestService {
       }
     );
   }
+  changeNotify(email, password,status) {
+    const body = new HttpParams()
+      .set('email', email)
+      .set('notify', status)
+      .set('password', password);
+
+    console.log(body.toString());
+    return this.http.post(this.serverURL + 'changeNotify.php',
+
+      body.toString(),
+      {
+        headers: new HttpHeaders()
+          .set('Content-Type', 'application/x-www-form-urlencoded')
+      }
+    );
+  }
 
   sendChat(email, password, user_id_app, conversation_id, type_conversation, message, type_message, obj) {
     const body = new HttpParams()
@@ -487,6 +503,126 @@ export class RestService {
 
     console.log(body.toString());
     return this.http.post(this.serverURL + 'sendGroupRequest.php',
+
+      body.toString(),
+      {
+        headers: new HttpHeaders()
+          .set('Content-Type', 'application/x-www-form-urlencoded')
+      }
+    );
+  }
+  updateNameGroup(email, password, name_group,query) {
+    const body = new HttpParams()
+      .set('email', email)
+      .set('name_group', name_group)
+      .set('group_id', query)
+      .set('password', password);
+
+    console.log(body.toString());
+    return this.http.post(this.serverURL + 'updateNameGroup.php',
+
+      body.toString(),
+      {
+        headers: new HttpHeaders()
+          .set('Content-Type', 'application/x-www-form-urlencoded')
+      }
+    );
+  }
+
+  updateDescriptionGroup(email, password, name_group,query) {
+    const body = new HttpParams()
+      .set('email', email)
+      .set('info_group', name_group)
+      .set('group_id', query)
+      .set('password', password);
+
+    console.log(body.toString());
+    return this.http.post(this.serverURL + 'updateDescriptionGroup.php',
+
+      body.toString(),
+      {
+        headers: new HttpHeaders()
+          .set('Content-Type', 'application/x-www-form-urlencoded')
+      }
+    );
+  }
+  addToGroup(email, password, name_group,query) {
+    const body = new HttpParams()
+      .set('email', email)
+      .set('user_two', name_group)
+      .set('group_id', query)
+      .set('password', password);
+
+    console.log(body.toString());
+    return this.http.post(this.serverURL + 'addToGroup.php',
+
+      body.toString(),
+      {
+        headers: new HttpHeaders()
+          .set('Content-Type', 'application/x-www-form-urlencoded')
+      }
+    );
+  }
+  exitGroup(email, password,query) {
+    const body = new HttpParams()
+      .set('email', email)
+      .set('group_id', query)
+      .set('password', password);
+
+    console.log(body.toString());
+    return this.http.post(this.serverURL + 'exitGroup.php',
+
+      body.toString(),
+      {
+        headers: new HttpHeaders()
+          .set('Content-Type', 'application/x-www-form-urlencoded')
+      }
+    );
+  }
+  blockUserGroup(email, password, name_group,query) {
+    const body = new HttpParams()
+      .set('email', email)
+      .set('user_two', name_group)
+      .set('group_id', query)
+      .set('password', password);
+
+    console.log(body.toString());
+    return this.http.post(this.serverURL + 'blockUserGroup.php',
+
+      body.toString(),
+      {
+        headers: new HttpHeaders()
+          .set('Content-Type', 'application/x-www-form-urlencoded')
+      }
+    );
+  }
+
+  deleteUserGroup(email, password, name_group,query) {
+    const body = new HttpParams()
+      .set('email', email)
+      .set('user_two', name_group)
+      .set('group_id', query)
+      .set('password', password);
+
+    console.log(body.toString());
+    return this.http.post(this.serverURL + 'deleteUserGroup.php',
+
+      body.toString(),
+      {
+        headers: new HttpHeaders()
+          .set('Content-Type', 'application/x-www-form-urlencoded')
+      }
+    );
+  }
+  changeReadOnly(email, password, name_group,query) {
+    const body = new HttpParams()
+      .set('email', email)
+      .set('readOnly', name_group)
+      .set('group_id', query)
+      .set('password', password);
+
+    console.log(body.toString());
+    return this.http.post(this.serverURL + 'changeReadOnly.php',
 
       body.toString(),
       {

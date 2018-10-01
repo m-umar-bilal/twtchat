@@ -1,0 +1,21 @@
+page-add-friends-group {
+  .spinner-container {
+    width: 100%;
+    text-align: center;
+    padding: 10px;
+  }
+  ion-card {
+    margin-bottom: 2em;
+  }
+
+  ion-card-content {
+    background-color: #F4F5F8;
+  }
+
+  ion-card img {
+    width: auto;
+    height: 44px;
+    display: block;
+    margin: 20px auto;
+  }
+}
