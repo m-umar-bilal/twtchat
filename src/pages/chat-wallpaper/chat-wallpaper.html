@@ -1,9 +1,11 @@
 <ion-header>
 
   <ion-navbar>
-      <ion-buttons end>
-          <button ion-button icon-only (tap)="setWallpaper()"><ion-icon name="images"></ion-icon></button>
-      </ion-buttons>
+    <ion-buttons end>
+      <button ion-button icon-only (tap)="setWallpaper()">
+        <ion-icon name="images"></ion-icon>
+      </button>
+    </ion-buttons>
     <ion-title>Chat Wallpaper</ion-title>
   </ion-navbar>
 
@@ -13,14 +15,22 @@
 <ion-content>
   <ion-list>
     <ion-item style="padding: 5;">
-        <!--<img style="border-radius: 10px;" src="../../assets/imgs/i.jpg" (tap)="setImageWallpaper('../../assets/imgs/i.jpg')" width="49%" />-->
-        <!--<img style="border-radius: 10px;" src="../../assets/imgs/bg.jpg" (tap)="setImageWallpaper('../../assets/imgs/bg.jpg')" width="49%" />-->
-        <br>
-        <img style="border-radius: 10px;" src="../../assets/imgs/bg1.jpg" (tap)="setImageWallpaper('../../assets/imgs/bg1.jpg')" width="49%" />
-        <img style="border-radius: 10px;" src="../../assets/imgs/bg2.jpg" (tap)="setImageWallpaper('../../assets/imgs/bg2.jpg')" width="49%" />
-        <br>
-        <img style="border-radius: 10px;" src="../../assets/imgs/bg3.jpg" (tap)="setImageWallpaper('../../assets/imgs/bg3.jpg')" width="49%" />
-        <img style="border-radius: 10px;" src="../../assets/imgs/bg4.png" (tap)="setImageWallpaper('../../assets/imgs/bg4.png')" width="49%" />
+      <!--<img style="border-radius: 10px;" src="../../assets/imgs/i.jpg" (tap)="setImageWallpaper('../../assets/imgs/i.jpg')" width="49%" />-->
+      <!--<img style="border-radius: 10px;" src="../../assets/imgs/bg.jpg" (tap)="setImageWallpaper('../../assets/imgs/bg.jpg')" width="49%" />-->
+      <br>
+
+      <img style="border-radius: 10px;" src="../../assets/imgs/bg1.jpg"
+           (tap)="setImageWallpaper('../../assets/imgs/bg1.jpg')" width="49%"/>
+      <img style="border-radius: 10px;" src="../../assets/imgs/bg2.jpg"
+           (tap)="setImageWallpaper('../../assets/imgs/bg2.jpg')" width="49%"/>
+      <br>
+      <img style="border-radius: 10px;" src="../../assets/imgs/bg3.jpg"
+           (tap)="setImageWallpaper('../../assets/imgs/bg3.jpg')" width="49%"/>
+      <img style="border-radius: 10px;" src="../../assets/imgs/bg4.png"
+           (tap)="setImageWallpaper('../../assets/imgs/bg4.png')" width="49%"/>
+      <br>
+      <img style="border-radius: 10px;" src="../../assets/imgs/bg0.png"
+           (tap)="setImageWallpaper('../../assets/imgs/bg0.png')" width="49%"/>
     </ion-item>
   </ion-list>
 </ion-content>

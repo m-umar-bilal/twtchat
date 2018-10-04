@@ -52,22 +52,25 @@ export class AddFriendsPage {
   }
 
   searchGroups() {
-    this.searching = true;
+    if(this.query&&this.query.length>0) {
 
-    this.svc.searchUsers(this.currentUser.email, this.currentUser.password, this.query.toLowerCase()).subscribe((data: any) => {
-      this.searching = false;
+      this.searching = true;
 
-      if (data.error_message === "") {
-        this.groups = data.users;
-      } else {
+      this.svc.searchUsers(this.currentUser.email, this.currentUser.password, this.query.toLowerCase()).subscribe((data: any) => {
+        this.searching = false;
+
+        if (data.error_message === "") {
+          this.groups = data.users;
+        } else {
+          this.groups = [];
+        }
+      }, error2 => {
+        this.searching = false;
+
         this.groups = [];
-      }
-    }, error2 => {
-      this.searching = false;
 
-      this.groups = [];
-
-    })
+      })
+    }
   }
 
   addGroup(id) {

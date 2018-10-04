@@ -31,4 +31,22 @@ chatsend(){
   deleteChat() {
 
   }
+
+  updateGroup(id) {
+    // this.svc.userData.privates.filter(item => item.id === id)[0].unread = "0";
+
+      this.svc.updateUnreadGroup(this.currentUser.email, this.currentUser.password, id)
+        .subscribe((res: any) => {
+            if (res.error_message === "") {
+              // this.presentToast("Updated");
+              this.svc.userData.privates.filter(item => item.id === id)[0].unread = "0";
+
+              // this.groupData.readonly = status;
+            }
+
+          },
+          err => {
+
+          })
+  }
 }

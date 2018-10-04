@@ -6,6 +6,10 @@ import {EmojiPickerComponentModule} from "../../components/emoji-picker/emoji-pi
 import {ChatService} from "../../providers/chat-service";
 import {EmojiProvider} from "../../providers/emoji";
 import {ChatPageModule} from "../chat/chat.module";
+import {VgControlsModule} from "videogular2/controls";
+import {VgBufferingModule} from "videogular2/buffering";
+import {VgOverlayPlayModule} from "videogular2/overlay-play";
+import {VgCoreModule} from "videogular2/core";
 
 @NgModule({
   declarations: [
@@ -14,6 +18,10 @@ import {ChatPageModule} from "../chat/chat.module";
   imports: [
     EmojiPickerComponentModule,
     ChatPageModule,
+    VgCoreModule,
+    VgControlsModule,
+    VgOverlayPlayModule,
+    VgBufferingModule,
     IonicPageModule.forChild(ChatsendPage),
   ],
   exports: [

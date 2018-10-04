@@ -53,22 +53,24 @@ export class SearchGroupsPage {
   }
 
   searchGroups() {
-    this.searching = true;
+    if(this.query&&this.query.length>0) {
+      this.searching = true;
 
-    this.svc.searchGroups(this.currentUser.email, this.currentUser.password, this.query.toLowerCase()).subscribe((data: any) => {
-      this.searching = false;
+      this.svc.searchGroups(this.currentUser.email, this.currentUser.password, this.query.toLowerCase()).subscribe((data: any) => {
+        this.searching = false;
 
-      if (data.error_message === "") {
-        this.groups = data.groups;
-      } else {
+        if (data.error_message === "") {
+          this.groups = data.groups;
+        } else {
+          this.groups = [];
+        }
+      }, error2 => {
+        this.searching = false;
+
         this.groups = [];
-      }
-    }, error2 => {
-      this.searching = false;
 
-      this.groups = [];
-
-    })
+      })
+    }
   }
 
   addGroup(id) {

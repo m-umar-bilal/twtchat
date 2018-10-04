@@ -18,6 +18,10 @@ import {FileChooser} from "@ionic-native/file-chooser";
 import {DomSanitizer} from "@angular/platform-browser";
 import {Media, MediaObject} from '@ionic-native/media';
 import {PagerService} from "../../services/pager.service";
+import {PhotoViewer} from "@ionic-native/photo-viewer";
+import {InAppBrowser} from "@ionic-native/in-app-browser";
+import {VideoEditor} from '@ionic-native/video-editor';
+import {Geolocation} from '@ionic-native/geolocation';
 
 declare let cordova: any;
 const MEDIA_FILES_KEY = 'mediaFiles';
@@ -73,7 +77,7 @@ export class ChatsendPage {
   private loading_: Loading;
   recordingInput: any;
   recording: any;
-  bgImage: any="../../assets/imgs/bg1.jpg";
+  bgImage: any = "../../assets/imgs/bg0.png";
 
 
   filePathA: string;
@@ -85,6 +89,7 @@ export class ChatsendPage {
   curr_playing_file: MediaObject;
   recStart: boolean;
   private curfilename: string;
+  private dcoumentId: string;
 
 
   constructor(public navParams: NavParams, public navCtrl: NavController,
@@ -92,9 +97,13 @@ export class ChatsendPage {
               private events: Events, private svc: RestService, public actionSheetCtrl: ActionSheetController,
               private camera: Camera, private transfer: Transfer, private file: File, private filePath: FilePath,
               public platform: Platform, private mediaCapture: MediaCapture, private pagerService: PagerService,
-              private media: Media) {
+              private media: Media, private photoViewer: PhotoViewer, private iab: InAppBrowser,
+              public sanitizer: DomSanitizer,             private VideoEditor: VideoEditor,
+              private fileChooser: FileChooser,
+              private geolocation: Geolocation
+  ) {
 
-    if(localStorage.getItem('wallimg' + this.currentUser.user_id)){
+    if (localStorage.getItem('wallimg' + this.currentUser.user_id)) {
       this.bgImage = localStorage.getItem('wallimg' + this.currentUser.user_id)
     }
     events.subscribe('user:updated', (user, time) => {
@@ -111,6 +120,30 @@ export class ChatsendPage {
     this.forGroups();
     this.forPrivateChat();
 
+  }
+
+  ValidURL(str) {
+    var pattern  = /^(?:(?:https?|ftp):\/\/)(?:\S+(?::\S*)?@)?(?:(?!10(?:\.\d{1,3}){3})(?!127(?:\.​\d{1,3}){3})(?!169\.254(?:\.\d{1,3}){2})(?!192\.168(?:\.\d{1,3}){2})(?!172\.(?:1[​6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1​,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00​a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u​00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:\/[^\s]*)?$/i;
+    // fragment locater
+    if (!pattern.test(str)) {
+      // alert("Please enter a valid URL.");
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  openUrl(url) {
+
+    //alert(url);
+    if (this.ValidURL(url)) {
+      // alert("working");
+      this.iab.create(url, '_system');
+    }
+  }
+
+  showImage(url) {
+    this.photoViewer.show(url);
   }
 
   setPage(page: number) {
@@ -165,6 +198,24 @@ export class ChatsendPage {
 
           handler: () => {
             this.startAduioStreaming();
+            console.log('Archive clicked');
+          }
+        },
+        {
+          text: 'Send Location',
+          icon: "locate",
+
+          handler: () => {
+            this.sendLocationMsg();
+            console.log('Archive clicked');
+          }
+        },
+        {
+          text: 'Send Document',
+          icon: "document",
+
+          handler: () => {
+            this.getDoc();
             console.log('Archive clicked');
           }
         },
@@ -359,6 +410,37 @@ export class ChatsendPage {
           }
         })
   }
+  sendChat_(message, obj) {
+    let ty;
+    if (this.navParams.get("page") === "private") {
+      ty = "0";
+    } else {
+      ty = "1";
+    }
+    this.svc.sendChat(this.currentUser.email, this.currentUser.password, this.currentUser.user_id, this.groupData.id, ty, message, "location", obj)
+      .subscribe((res: any) => {
+
+
+          if (res.error_message === "") {
+            // localStorage.setItem("UserData", JSON.stringify(res));
+            // this.svc.userData = res;
+            // console.log("yeh aaya");
+            // console.log(res);
+            this.scrollToBottom();
+
+          } else {
+
+          }
+        },
+        err => {
+          console.log(err);
+
+          if (err !== false) {
+            // let toast = this.toastsAlertService.createToast(err);
+            // toast.present();
+          }
+        })
+  }
 
 
   /**
@@ -427,6 +509,74 @@ export class ChatsendPage {
     //     }
     //   })
   }
+  sendLocationMsg() {
+
+    this.geolocation.getCurrentPosition().then((resp) => {
+      // resp.coords.latitude
+      // resp.coords.longitude
+
+
+    let locmsg ='https://www.google.com/maps/place/'+resp.coords.latitude+','+resp.coords.longitude+'/@'+resp.coords.latitude+','+resp.coords.longitude+',13z';
+
+    // Mock message
+    const id = new Date();
+    let newMsg;
+    if (this.currentUser.photoProfil) {
+
+      let arr = this.currentUser.photoProfil.split('profil');
+      newMsg = {
+
+
+        create_date: id,
+        directory: arr[0],
+        message: locmsg,
+        mime: null,
+        name: this.currentUser.name,
+        name_file: null,
+        photo_profil: "profil" + arr[1],
+        type_message: "location",
+        unique_code: (id).getTime() + "" + this.currentUser.user_id + "" + this.groupData.id + "" + this.groupData.private,
+        user_id: this.currentUser.user_id,
+      };
+    }
+    else {
+      newMsg = {
+
+
+        create_date: id,
+        message: locmsg,
+        mime: null,
+        name: this.currentUser.name,
+        name_file: null,
+        type_message: "location",
+        unique_code: (id).getTime() + "" + this.currentUser.user_id + "" + this.groupData.id + "" + this.groupData.private,
+        user_id: this.currentUser.user_id,
+      };
+    }
+    this.sendChat_(locmsg, newMsg.unique_code);
+
+    this.messages.push(newMsg);
+    this.pagedItems.push(newMsg);
+
+    this.editorMsg = '';
+    this.scrollToBottom();
+
+    if (!this.showEmojiPicker) {
+      this.focus();
+    }
+    }).catch((error) => {
+      console.log('Error getting location', error);
+    });
+
+
+    // this.chatService.sendMsg(newMsg)
+    //   .then(() => {
+    //     let index = this.getMsgIndexById(id);
+    //     if (index !== -1) {
+    //       this.msgList[index].status = 'success';
+    //     }
+    //   })
+  }
 
   /**
    * @name pushNewMsg
@@ -456,7 +606,7 @@ export class ChatsendPage {
     // }, 400)
     setTimeout(() => {
       element.scrollIntoView(true)
-    }, 200);
+    }, 300);
   }
 
   private focus() {
@@ -600,10 +750,8 @@ export class ChatsendPage {
   private copyFileToLocalDir(namePath, currentName, newFileName, type) {
     this.file.copyFile(namePath, currentName, cordova.file.dataDirectory, newFileName).then(success => {
       if (type === "video") {
-        this.videoId = newFileName;
-        this.flag_play = false;
-        this.flag_upload = false;
-        this.uploadVideo("video");
+
+        // this.uploadVideo("video");
       } else {
 
         this.lastImage = newFileName;
@@ -729,15 +877,282 @@ export class ChatsendPage {
 
   }
 
-  public uploadVideo(type) {
+
+  onVideoSendDataSuccess(videoURI) {
+
+    //alert(videoURI);
+
+    var file = videoURI;
+
+    if (cordova.platformId === 'android' && !(new RegExp(location.protocol + '//')).test(file)) {
+      file = "file:" + '//' + file;
+    }
+
+    //alert(file);
+
+    window.localStorage.setItem("VIDEO_SAVE", file);
+
+    this.VideoEditor.getVideoInfo(
+      {
+        fileUri: file
+      }
+    ).then((info) => {
+      this.loading = this.loadingCtrl.create({
+        content: 'Please wait...'
+      });
+      this.loading.present();
+      this.getVideoInfoSuccess(info);
+    });
+
+  }
+
+  getVideoInfoSuccess(info) {
+
+
+    var file = window.localStorage.getItem("VIDEO_SAVE");
+
+    var videoFileName = (new Date().getUTCMilliseconds()).toString(); // I suggest a uuid
+
+    var outputWidth = 420;
+    var outputHeight = 420;
+
+    this.VideoEditor.transcodeVideo(
+      {
+        fileUri: file,
+        outputFileName: videoFileName,
+        outputFileType: this.VideoEditor.OutputFileType.MPEG4,
+        optimizeForNetworkUse: this.VideoEditor.OptimizeForNetworkUse.YES,
+        saveToLibrary: false,
+        maintainAspectRatio: true,
+        width: outputWidth,
+        height: outputHeight,
+        videoBitrate: 420000, // 1 megabit
+        fps: 24,
+        audioChannels: 2,
+        audioSampleRate: 44100,
+        audioBitrate: 128000, // 128 kilobits
+        progress: function (info) {
+          console.log('transcodeVideo progress callback, info: ' + info);
+        }
+      }
+    ).then((info) => {
+      this.videoTranscodeSuccess(info);
+
+    });
+
+  }
+
+  captureSuccess(s) {
+
+    console.log("Success");
+    console.dir(JSON.stringify(s[0]));
+
+
+    let capturedFile = s[0];
+
+    let fileName = capturedFile.name;
+    let dir = capturedFile['localURL'].split('/');
+    dir.pop();
+    let fromDirectory = dir.join('/');
+    let toDirectory = this.file.dataDirectory;
+
+    this.file.copyFile(fromDirectory, fileName, toDirectory, fileName).then((res) => {
+      this.videoId = this.file.dataDirectory + fileName;
+      // this.uploadVideo('video');
+
+      console.log(this.videoId);
+
+
+      window.localStorage.setItem("VIDEO_SAVE", this.videoId);
+
+      this.VideoEditor.getVideoInfo(
+        {
+          fileUri: this.videoId,
+        }
+      ).then((info) => {
+        this.loading = this.loadingCtrl.create({
+          content: 'Please wait...'
+        });
+        this.loading.present();
+        this.getVideoInfoSuccess(info);
+      }).catch((err) => {
+        console.error(JSON.stringify(err));
+      })
+      // this.storeMediaFiles([{name: fileName, size: capturedFile.size}]);
+    }, err => {
+      console.log('err: ', err);
+    });
+
+
+    // var file = s[0];
+
+
+  }
+
+
+  videoTranscodeSuccess(result) {
+
+    let file;
+    // if (cordova.platformId === 'android' && !(new RegExp(location.protocol + '//')).test(result)) {
+    //   file = 'file://' + result;
+    // } else {
+    //   file = result;
+    // }
+    // result is the path to the transcoded video on the device
+    console.log('videoTranscodeSuccess, result: ' + result);
+    //alert('videoTranscodeSuccess, result: ' + result);
+    result;
+    const id = new Date();
+    let newMsg;
+    let filename =  result.substr(result.lastIndexOf('/')+1);;
+
+    if (this.currentUser.photoProfil) {
+
+      let arr = this.currentUser.photoProfil.split('profil');
+      newMsg = {
+
+
+        create_date: id,
+        directory: arr[0],
+        local: true,
+        message: result,
+        mime: "video/mp4",
+        name: this.currentUser.name,
+        name_file: filename,
+        photo_profil: "profil" + arr[1],
+        type_message: "video",
+        unique_code: (id).getTime() + "" + this.currentUser.user_id + "" + this.groupData.id + "" + this.groupData.private,
+        user_id: this.currentUser.user_id,
+      };
+    }
+    else {
+      newMsg = {
+
+        local: true,
+        create_date: id,
+        message: result,
+        mime: "video/mp4",
+        name: this.currentUser.name,
+        name_file: filename,
+        type_message: "video",
+        unique_code: (id).getTime() + "" + this.currentUser.user_id + "" + this.groupData.id + "" + this.groupData.private,
+        user_id: this.currentUser.user_id,
+      };
+    };
+    this.messages.push(newMsg);
+    this.pagedItems.push(newMsg)
+    // alert(JSON.stringify(newMsg.message));
+    this.scrollToBottom();
+    this.loading.dismissAll();
+
+    this.uploadVideo(result,'video',newMsg);
+    // $.mobile.loading("hide");
+
+    // var v = "<video controls='controls' preload='metadata' class='allVideo'>";
+    // v += "<source src='" + result + "#t=0.1' type='video/mp4'>";
+    // v += "</video>";
+    //
+    // document.querySelector("#videoArea").innerHTML = v;
+    //
+    // window.localStorage.setItem("FILE_MESSAGE", result);
+
+    // $.mobile.changePage( "#pageSendVideo", { transition: "pop", changeHash: true });
+
+  }
+
+  sendCameraVideo() {
+
+    this.mediaCapture.captureVideo({limit: 1, quality: 0}).then((info: MediaFile[]) => {
+
+      this.captureSuccess(info);
+    });
+
+
+
+
+
+  }
+
+
+
+
+
+  public uploadVideo(result,type,newMsg) {
 
     let url = this.serverURL + "messageFile.php";
 
-    let targetPath = this.file.dataDirectory + this.videoId;
+    let targetPath = result;
+    let filename =  targetPath.substr(targetPath.lastIndexOf('/')+1);
+    //
+
+    let ty;
+    if (this.navParams.get("page") === "private") {
+      ty = "0";
+    } else {
+      ty = "1";
+    }
+
+
+    const fileTransfer: TransferObject = this.transfer.create();
+
+    console.log('FAke while uploading file.');
+
+
+    let postData = {
+      conversation_id: this.groupData.id,
+      type_conversation: ty,
+      type_message: type,
+      unique_code: newMsg.unique_code
+    };
+    let params = {
+      email: this.currentUser.email, password: this.currentUser.password,
+      array_messages: [postData]
+    };
+
+    let options = {
+      fileKey: "file",
+      fileName: filename,
+      chunkedMode: false,
+      mimeType: "video/mp4",
+      httpMethod: 'POST',
+      params: {...params, 'fileName': filename}
+    };
+
+
+    this.loading_ = this.loadingCtrl.create({
+      content: 'Uploading...',
+    });
+    this.loading_.present();
+    // alert(targetPath)
+    fileTransfer.upload(targetPath, url, options).then((data: any) => {
+      this.loading_.dismissAll();
+      this.getGroups__();
+      // alert(JSON.stringify(data));
+
+      this.presentToast('Group Created Successfully.');
+      console.log('Group Created Successfully.');
+      console.log(JSON.stringify(data))
+
+    }, err => {
+      this.presentToast('Error while uploading file.');
+      console.log('Error while uploading file.');
+      console.log(JSON.stringify(err))
+    });
+    this.getGroups__();
+
+
+
+  }
+
+  public uploadDocument(type) {
+
+    let url = this.serverURL + "messageFile.php";
+
+    let targetPath = this.dcoumentId;
 
     const id = new Date();
     let newMsg;
-    let filename = this.videoId;
+    let filename = this.dcoumentId.substr(this.dcoumentId.lastIndexOf('/')+1);
 
     if (this.currentUser.photoProfil) {
 
@@ -749,7 +1164,7 @@ export class ChatsendPage {
         directory: arr[0],
         local: true,
         message: targetPath,
-        mime: "video/mp4",
+        mime: "multipart/form-data",
         name: this.currentUser.name,
         name_file: filename,
         photo_profil: "profil" + arr[1],
@@ -764,7 +1179,7 @@ export class ChatsendPage {
         local: true,
         create_date: id,
         message: targetPath,
-        mime: "video/mp4",
+        mime: "multipart/form-data",
         name: this.currentUser.name,
         name_file: filename,
         type_message: type,
@@ -793,25 +1208,24 @@ export class ChatsendPage {
       fileKey: "file",
       fileName: filename,
       chunkedMode: false,
-      mimeType: "video/mp4",
+      mimeType: "multipart/form-data",
       httpMethod: 'POST',
       params: {...params, 'fileName': filename}
     };
 
     const fileTransfer: TransferObject = this.transfer.create();
 
-    console.log('FAke while uploading file.');
     console.log(targetPath)
-    this.loading_ = this.loadingCtrl.create({
-      content: 'Uploading...',
-    });
-    this.loading_.present();
+    // this.loading_ = this.loadingCtrl.create({
+    //   content: 'Uploading...',
+    // });
+    // this.loading_.present();
     fileTransfer.upload(targetPath, url, options).then((data: any) => {
       this.loading_.dismissAll();
       this.getGroups_();
       this.presentToast('Group Created Successfully.');
       console.log('Group Created Successfully.');
-      console.log(JSON.stringify(data))
+      alert(JSON.stringify(data))
 
     }, err => {
       this.presentToast('Error while uploading file.');
@@ -866,6 +1280,35 @@ export class ChatsendPage {
     }
   }
 
+  getGroups__() {
+    if (localStorage.getItem('currentUser')) {
+
+      this.svc.getGroups(this.currentUser.email, this.currentUser.password)
+        .subscribe((res: any) => {
+            // this.loading_.dismissAll();
+
+            if (res.error_message === "") {
+              localStorage.setItem("UserData", JSON.stringify(res));
+              this.svc.userData = res;
+              this.events.publish('chat:updated', res, Date.now());
+
+              console.log(res);
+
+            } else {
+
+            }
+          },
+          err => {
+            console.log(err);
+
+            if (err !== false) {
+              // let toast = this.toastsAlertService.createToast(err);
+              // toast.present();
+            }
+          })
+    }
+  }
+
 
   public presentVideoActionSheet() {
     let actionSheet = this.actionSheetCtrl.create({
@@ -874,13 +1317,23 @@ export class ChatsendPage {
         {
           text: "Load from Gallery",
           handler: () => {
-            this.getVideo();
+            this.camera.getPicture({ quality: 50,
+              correctOrientation: true,
+              destinationType: this.camera.DestinationType.FILE_URI,
+              encodingType: this.camera.EncodingType.JPEG,
+              sourceType: this.camera.PictureSourceType.PHOTOLIBRARY,
+              mediaType: this.camera.MediaType.VIDEO
+            }).then((res)=>{
+
+              this.onVideoSendDataSuccess(res);
+            });
+
           }
         },
         {
           text: "Use Camera",
           handler: () => {
-            this.captureVideo();
+            this.sendCameraVideo();
           }
         },
         {
@@ -893,41 +1346,88 @@ export class ChatsendPage {
   }
 
 
-  getVideo() {
-    let options = {
-      sourceType: this.camera.PictureSourceType.SAVEDPHOTOALBUM,
-      mediaType: this.camera.MediaType.VIDEO,
-      destinationType: this.camera.DestinationType.FILE_URI
-    };
+  // getVideo() {
+  //   let options = {
+  //     sourceType: this.camera.PictureSourceType.SAVEDPHOTOALBUM,
+  //     mediaType: this.camera.MediaType.VIDEO,
+  //     destinationType: this.camera.DestinationType.FILE_URI
+  //   };
+  //
+  //   // Get the data of an image
+  //   this.camera.getPicture(options).then((imagePath) => {
+  //
+  //
+  //     // if (this.platform.is('android')) {
+  //     this.file.resolveLocalFilesystemUrl('file://' + imagePath,).then((FE: FileEntry) => {
+  //
+  //       console.log("lasrimage")
+  //       // console.log(  FE.isFile)
+  //       FE.file(file => {
+  //
+  //         let capturedFile = file;
+  //         let fileName = capturedFile.name;
+  //         let dir = capturedFile['localURL'].split('/');
+  //         dir.pop();
+  //         let fromDirectory = dir.join('/');
+  //         let toDirectory = this.file.dataDirectory;
+  //
+  //         this.file.copyFile(fromDirectory, fileName, toDirectory, fileName).then((res) => {
+  //           this.videoId = fileName;
+  //           // this.uploadVideo('video');
+  //           // this.storeMediaFiles([{name: fileName, size: capturedFile.size}]);
+  //         }, err => {
+  //           console.log('err: ', err);
+  //         });
+  //
+  //
+  //       })
+  //
+  //     }, err => {
+  //       console.log("nae chala");
+  //       console.log(JSON.stringify(err));
+  //
+  //
+  //     });
+  //
+  //   }, err => {
+  //     console.log("YA Allah MADAD");
+  //     console.log(JSON.stringify(err));
+  //
+  //
+  //   })
+  //     .catch(e => console.log(e));
+  // }
 
-    // Get the data of an image
-    this.camera.getPicture(options).then((imagePath) => {
+  getDoc() {
+    this.fileChooser.open()
+      .then((uri) =>
+      {
 
 
       // if (this.platform.is('android')) {
-      this.file.resolveLocalFilesystemUrl('file://' + imagePath,).then((FE: FileEntry) => {
-
-        console.log("lasrimage")
-        // console.log(  FE.isFile)
-        FE.file(file => {
-
-          let capturedFile = file;
-          let fileName = capturedFile.name;
-          let dir = capturedFile['localURL'].split('/');
-          dir.pop();
-          let fromDirectory = dir.join('/');
-          let toDirectory = this.file.dataDirectory;
-
-          this.file.copyFile(fromDirectory, fileName, toDirectory, fileName).then((res) => {
-            this.videoId = fileName;
-            this.uploadVideo('video');
-            // this.storeMediaFiles([{name: fileName, size: capturedFile.size}]);
-          }, err => {
-            console.log('err: ', err);
-          });
-
-
-        })
+      // this.file.resolveLocalFilesystemUrl('file://' + imagePath,).then((FE: FileEntry) => {
+      //
+      //   console.log("lasrimage")
+      //   // console.log(  FE.isFile)
+      //   FE.file(file => {
+      //
+      //     let capturedFile = file;
+      //     let fileName = capturedFile.name;
+      //     let dir = capturedFile['localURL'].split('/');
+      //     dir.pop();
+      //     let fromDirectory = dir.join('/');
+      //     let toDirectory = this.file.dataDirectory;
+      //
+      //     this.file.copyFile(fromDirectory, fileName, toDirectory, fileName).then((res) => {
+            this.dcoumentId = uri;
+            this.uploadDocument('doc');
+        //     // this.storeMediaFiles([{name: fileName, size: capturedFile.size}]);
+        //   }, err => {
+        //     console.log('err: ', err);
+        //   });
+        //
+        //
+        // })
 
       }, err => {
         console.log("nae chala");
@@ -935,42 +1435,43 @@ export class ChatsendPage {
 
 
       });
-
-    }, err => {
-      console.log("YA Allah MADAD");
-      console.log(JSON.stringify(err));
-
-
-    })
-      .catch(e => console.log(e));
+    //
+    // }, err => {
+    //   console.log("YA Allah MADAD");
+    //   console.log(JSON.stringify(err));
+    //
+    //
+    // })
+    //   .catch(e => console.log(e));
   }
 
 
-  captureVideo() {
-    let options: CaptureVideoOptions = {
-      limit: 1,
-      duration: 30
-    }
-    this.mediaCapture.captureVideo(options).then((res: MediaFile[]) => {
-
-        let capturedFile = res[0];
-
-        let fileName = capturedFile.name;
-        let dir = capturedFile['localURL'].split('/');
-        dir.pop();
-        let fromDirectory = dir.join('/');
-        let toDirectory = this.file.dataDirectory;
-
-        this.file.copyFile(fromDirectory, fileName, toDirectory, fileName).then((res) => {
-          this.videoId = fileName;
-          this.uploadVideo('video');
-          // this.storeMediaFiles([{name: fileName, size: capturedFile.size}]);
-        }, err => {
-          console.log('err: ', err);
-        });
-      },
-      (err: CaptureError) => console.error(err));
-  }
+  // captureVideo() {
+  //   let options: CaptureVideoOptions = {
+  //     limit: 1,
+  //     duration: 900,
+  //     quality:50
+  //   }
+  //   this.mediaCapture.captureVideo(options).then((res: MediaFile[]) => {
+  //
+  //       let capturedFile = res[0];
+  //
+  //       let fileName = capturedFile.name;
+  //       let dir = capturedFile['localURL'].split('/');
+  //       dir.pop();
+  //       let fromDirectory = dir.join('/');
+  //       let toDirectory = this.file.dataDirectory;
+  //
+  //       this.file.copyFile(fromDirectory, fileName, toDirectory, fileName).then((res) => {
+  //         this.videoId = fileName;
+  //         // this.uploadVideo('video');
+  //         // this.storeMediaFiles([{name: fileName, size: capturedFile.size}]);
+  //       }, err => {
+  //         console.log('err: ', err);
+  //       });
+  //     },
+  //     (err: CaptureError) => console.error(err));
+  // }
 
 
   doInfinite(scroll: any) {
@@ -1109,7 +1610,6 @@ export class ChatsendPage {
     const fileTransfer: TransferObject = this.transfer.create();
 
 
-
     console.log("helloooooooo")
     fileTransfer.upload(targetPath, url, options).then((data: any) => {
       console.log(JSON.stringify(data))
@@ -1221,7 +1721,7 @@ export class ChatsendPage {
         const fileTransfer: TransferObject = this.transfer.create();
 
         console.log('filename' + this.curfilename);
-        console.log('filename'+ this.file.externalRootDirectory + this.curfilename);
+        console.log('filename' + this.file.externalRootDirectory + this.curfilename);
         let path = this.file.externalRootDirectory + this.curfilename;
 
 
@@ -1231,12 +1731,12 @@ export class ChatsendPage {
         this.loading_.present();
 
         fileTransfer.upload(path, url, options).then((result) => {
-          this.loading_.dismissAll();
-          this.recordingInput = false;
-          this.getGroups_();
+            this.loading_.dismissAll();
+            this.recordingInput = false;
+            this.getGroups_();
 
 
-          console.log(JSON.stringify(result));
+            console.log(JSON.stringify(result));
             // this.sendAudio(name);
             this.recStart = false;
 
@@ -1261,11 +1761,11 @@ export class ChatsendPage {
 
   startRecord() {
     if (this.platform.is('ios')) {
-      this.fileNameA = 'record'+new Date().getDate()+new Date().getMonth()+new Date().getFullYear()+new Date().getHours()+new Date().getMinutes()+new Date().getSeconds()+'.3gp';
+      this.fileNameA = 'record' + new Date().getDate() + new Date().getMonth() + new Date().getFullYear() + new Date().getHours() + new Date().getMinutes() + new Date().getSeconds() + '.3gp';
       this.filePathA = this.file.documentsDirectory.replace(/file:\/\//g, '') + this.fileNameA;
       this.audio = this.media.create(this.filePathA);
     } else if (this.platform.is('android')) {
-      this.fileNameA = 'record'+new Date().getDate()+new Date().getMonth()+new Date().getFullYear()+new Date().getHours()+new Date().getMinutes()+new Date().getSeconds()+'.3gp';
+      this.fileNameA = 'record' + new Date().getDate() + new Date().getMonth() + new Date().getFullYear() + new Date().getHours() + new Date().getMinutes() + new Date().getSeconds() + '.3gp';
       this.filePathA = this.file.externalDataDirectory.replace(/file:\/\//g, '') + this.fileNameA;
       this.audio = this.media.create(this.filePathA);
     }
@@ -1275,15 +1775,16 @@ export class ChatsendPage {
 
   stopRecord() {
     this.audio.stopRecord();
-    let data = { filename: this.fileNameA };
+    let data = {filename: this.fileNameA};
     this.audioList.push(data);
     localStorage.setItem("audiolist", JSON.stringify(this.audioList));
     this.recording = false;
-    console.log(this.playAudio(this.fileNameA,0));
-    this.uploadAudio('audio',this.playAudio('file://'+this.fileNameA,0));
+    console.log(this.playAudio(this.fileNameA, 0));
+    this.uploadAudio('audio', this.playAudio('file://' + this.fileNameA, 0));
     // this.getAudioList();
   }
-  playAudio(file,idx):string {
+
+  playAudio(file, idx): string {
     if (this.platform.is('ios')) {
       this.filePathA = this.file.documentsDirectory.replace(/file:\/\//g, '') + file;
       this.audio = this.media.create(this.filePathA);
@@ -1298,5 +1799,6 @@ export class ChatsendPage {
     return this.filePathA;
 
   }
+
 
 }

@@ -70,13 +70,19 @@
           {{group?.messages[0]?.message}}</p>
         <p style="margin-top: 10px;"
            *ngIf="group?.messages&&group?.messages.length>0&&group?.messages[0]&&group?.messages[0].type_message==='video'">
-          Video</p>
+          <ion-icon name="videocam"></ion-icon> Video</p>
         <p style="margin-top: 10px;"
            *ngIf="group?.messages&&group?.messages.length>0&&group?.messages[0]&&group?.messages[0].type_message==='photo'">
-          Photo</p>
+          <ion-icon name="image"></ion-icon> Photo</p>
+        <p style="margin-top: 10px;"
+           *ngIf="group?.messages&&group?.messages.length>0&&group?.messages[0]&&group?.messages[0].type_message==='location'">
+          <ion-icon name="locate"></ion-icon> Location</p>
+        <p style="margin-top: 10px;"
+           *ngIf="group?.messages&&group?.messages.length>0&&group?.messages[0]&&group?.messages[0].type_message==='doc'">
+          <ion-icon name="document"></ion-icon> Document</p>
         <p style="margin-top: 10px;"
            *ngIf="group?.messages&&group?.messages.length>0&&group?.messages[0]&&group?.messages[0].type_message==='audio'">
-          Audio</p>
+          <ion-icon name="mic"></ion-icon> Audio</p>
         <p item-end style="margin-top: -30px">{{group?.date_lastMessage| timeAgo}}</p>
       </ion-item>
     </div>

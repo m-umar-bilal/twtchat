@@ -61,8 +61,7 @@ page-chatsend {
           margin-top: 5px;
           border-radius: 5px;
           padding: 8px;
-          border: 1px solid #ddd;
-          color: #fff;
+
           width: auto;
           max-width: 80%;
           span.triangle {
@@ -72,9 +71,6 @@ page-chatsend {
             width: 8px;
             top: 12px;
             display: block;
-            border-style: solid;
-            border-color: #ddd;
-            border-width: 1px;
             -webkit-transform: rotate(45deg);
             transform: rotate(45deg);
             position: absolute;
@@ -100,7 +96,7 @@ page-chatsend {
         span.triangle {
           border-top-width: 0;
           border-right-width: 0;
-          left: -5px;
+          left: -4px;
         }
       }
 
@@ -128,7 +124,7 @@ page-chatsend {
           background-color: $userBackgroundColor;
           border-bottom-width: 0;
           border-left-width: 0;
-          right: -5px;
+          right: -4px;
         }
       }
 

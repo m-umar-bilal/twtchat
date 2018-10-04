@@ -294,7 +294,7 @@ export class RestService {
     );
   }
 
-  getOneGroup(email, password,query) {
+  getOneGroup(email, password, query) {
     const body = new HttpParams()
       .set('email', email)
       .set('group_id', query)
@@ -310,7 +310,8 @@ export class RestService {
       }
     );
   }
-  getOneProfil(email, password,query) {
+
+  getOneProfil(email, password, query) {
     const body = new HttpParams()
       .set('email', email)
       .set('user_two', query)
@@ -326,7 +327,8 @@ export class RestService {
       }
     );
   }
-  sendFriendRequest(email, password,query) {
+
+  sendFriendRequest(email, password, query) {
     const body = new HttpParams()
       .set('email', email)
       .set('user_two', query)
@@ -342,7 +344,8 @@ export class RestService {
       }
     );
   }
-  acceptPendingGroupRequest(email, password,query,group_id) {
+
+  acceptPendingGroupRequest(email, password, query, group_id) {
     const body = new HttpParams()
       .set('email', email)
       .set('user_two', query)
@@ -359,7 +362,8 @@ export class RestService {
       }
     );
   }
-  declinePendingGroupRequest(email, password,query,group_id) {
+
+  declinePendingGroupRequest(email, password, query, group_id) {
     const body = new HttpParams()
       .set('email', email)
       .set('user_two', query)
@@ -376,7 +380,8 @@ export class RestService {
       }
     );
   }
-  handlefriendRequest(email, password,query,status) {
+
+  handlefriendRequest(email, password, query, status) {
     const body = new HttpParams()
       .set('email', email)
       .set('user_two', query)
@@ -394,7 +399,7 @@ export class RestService {
     );
   }
 
-  deleteSnap(email, password,status) {
+  deleteSnap(email, password, status) {
     const body = new HttpParams()
       .set('email', email)
       .set('status_id', status)
@@ -410,7 +415,8 @@ export class RestService {
       }
     );
   }
-  changeNotify(email, password,status) {
+
+  changeNotify(email, password, status) {
     const body = new HttpParams()
       .set('email', email)
       .set('notify', status)
@@ -430,7 +436,13 @@ export class RestService {
   sendChat(email, password, user_id_app, conversation_id, type_conversation, message, type_message, obj) {
     const body = new HttpParams()
       .set('email', email)
-      .set('array_messages', JSON.stringify([{conversation_id, type_conversation:type_conversation, message, type_message, unique_code:obj}]))
+      .set('array_messages', JSON.stringify([{
+        conversation_id,
+        type_conversation: type_conversation,
+        message,
+        type_message,
+        unique_code: obj
+      }]))
       .set('password', password);
 
     console.log(body.toString());
@@ -461,6 +473,7 @@ export class RestService {
       }
     );
   }
+
   searchUsers(email, password, query) {
     const body = new HttpParams()
       .set('email', email)
@@ -511,7 +524,8 @@ export class RestService {
       }
     );
   }
-  updateNameGroup(email, password, name_group,query) {
+
+  updateNameGroup(email, password, name_group, query) {
     const body = new HttpParams()
       .set('email', email)
       .set('name_group', name_group)
@@ -529,7 +543,7 @@ export class RestService {
     );
   }
 
-  updateDescriptionGroup(email, password, name_group,query) {
+  updateDescriptionGroup(email, password, name_group, query) {
     const body = new HttpParams()
       .set('email', email)
       .set('info_group', name_group)
@@ -546,7 +560,8 @@ export class RestService {
       }
     );
   }
-  addToGroup(email, password, name_group,query) {
+
+  addToGroup(email, password, name_group, query) {
     const body = new HttpParams()
       .set('email', email)
       .set('user_two', name_group)
@@ -563,7 +578,8 @@ export class RestService {
       }
     );
   }
-  exitGroup(email, password,query) {
+
+  exitGroup(email, password, query) {
     const body = new HttpParams()
       .set('email', email)
       .set('group_id', query)
@@ -579,7 +595,8 @@ export class RestService {
       }
     );
   }
-  blockUserGroup(email, password, name_group,query) {
+
+  blockUserGroup(email, password, name_group, query) {
     const body = new HttpParams()
       .set('email', email)
       .set('user_two', name_group)
@@ -597,7 +614,7 @@ export class RestService {
     );
   }
 
-  deleteUserGroup(email, password, name_group,query) {
+  deleteUserGroup(email, password, name_group, query) {
     const body = new HttpParams()
       .set('email', email)
       .set('user_two', name_group)
@@ -614,7 +631,8 @@ export class RestService {
       }
     );
   }
-  changeReadOnly(email, password, name_group,query) {
+
+  changeReadOnly(email, password, name_group, query) {
     const body = new HttpParams()
       .set('email', email)
       .set('readOnly', name_group)
@@ -632,6 +650,39 @@ export class RestService {
     );
   }
 
+  updateUnreadGroup(email, password, query) {
+    const body = new HttpParams()
+      .set('email', email)
+      .set('relation_id', query)
+      .set('password', password);
+
+    console.log(body.toString());
+    return this.http.post(this.serverURL + 'readPrivates.php',
+
+      body.toString(),
+      {
+        headers: new HttpHeaders()
+          .set('Content-Type', 'application/x-www-form-urlencoded')
+      }
+    );
+  }
+
+  updateUnreadMGroup(email, password, query) {
+    const body = new HttpParams()
+      .set('email', email)
+      .set('groups_id', query)
+      .set('password', password);
+
+    console.log(body.toString());
+    return this.http.post(this.serverURL + 'readGroups.php',
+
+      body.toString(),
+      {
+        headers: new HttpHeaders()
+          .set('Content-Type', 'application/x-www-form-urlencoded')
+      }
+    );
+  }
 
 
   public requestPOST(link, body) {

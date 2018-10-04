@@ -2,34 +2,10 @@ import { NgModule, ErrorHandler } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import {IonicApp, IonicModule, IonicErrorHandler} from 'ionic-angular';
 import { MyApp } from './app.component';
-import { ChatPage } from '../pages/chat/chat';
-import { GroupsPage } from '../pages/groups/groups';
-import { FriendsPage } from '../pages/friends/friends';
-import { SettingsPage } from '../pages/settings/settings';
-import { TabsPage } from '../pages/tabs/tabs';
-import { EditProfilePage } from '../pages/edit-profile/edit-profile';
-import { ChatWallpaperPage } from '../pages/chat-wallpaper/chat-wallpaper';
-import { SettingsGroupsPage } from '../pages/settings-groups/settings-groups';
-import { GroupInfoPage } from '../pages/group-info/group-info';
-import { WelcomePage } from '../pages/welcome/welcome';
-import { SignupPage } from '../pages/signup/signup';
-import { LoginPage } from '../pages/login/login';
-import { ChatsendPage } from '../pages/chatsend/chatsend';
-import { ContactInfoPage } from '../pages/contact-info/contact-info';
-import { ForgotPasswordPage } from '../pages/forgot-password/forgot-password';
-import { SignupEmailPage } from '../pages/signup-email/signup-email';
-import { PrivatePoliyPage } from '../pages/private-poliy/private-poliy';
-import { SearchGroupsPage } from '../pages/search-groups/search-groups';
-import { AddGroupPage } from '../pages/add-group/add-group';
-import { AddFriendsPage } from '../pages/add-friends/add-friends';
-import { PendingFriendsPage } from '../pages/pending-friends/pending-friends';
-import { PendingGroupsPage } from '../pages/pending-groups/pending-groups';
-import { AboutPage } from '../pages/about/about';
-import { StatusPage } from '../pages/status/status';
-import { MyStatusPage } from '../pages/my-status/my-status';
-import { TwtchatPage } from '../pages/twtchat/twtchat';
+
 import { Device } from '@ionic-native/device';
 import { HttpModule } from "@angular/http";
+import {Geolocation} from '@ionic-native/geolocation';
 
 //IONIC NATIVE
 import { ImagePicker } from '@ionic-native/image-picker';
@@ -81,36 +57,10 @@ import {FileChooser} from "@ionic-native/file-chooser";
 import {PagerService} from "../services";
 import {VideoPlayer} from "@ionic-native/video-player";
 import {PhotoViewer} from "@ionic-native/photo-viewer";
+import {InAppBrowser} from "@ionic-native/in-app-browser";
 @NgModule({
   declarations: [
-    MyApp,
-    // ChatPage,
-    // GroupsPage,
-    // FriendsPage,
-    // SettingsPage,
-    // EditProfilePage,
-    // ChatWallpaperPage,
-    // SettingsGroupsPage,
-    // GroupInfoPage,
-    // WelcomePage,
-    // SignupPage,
-    // LoginPage,
-    // ChatsendPage,
-    // ContactInfoPage,
-    // ForgotPasswordPage,
-    // SignupEmailPage,
-    // PrivatePoliyPage,
-    // SearchGroupsPage,
-    // AddGroupPage,
-    // AddFriendsPage,
-    // PendingFriendsPage,
-    // PendingGroupsPage,
-    // AboutPage,
-    // StatusPage,
-    // TwtchatPage,
-    // MyStatusPage,
-    // TimeAgoPipe,
-    // ChangePasswordPage
+    MyApp
   ],
   imports: [
     BrowserModule,
@@ -123,33 +73,7 @@ import {PhotoViewer} from "@ionic-native/photo-viewer";
   ],
   bootstrap: [IonicApp],
   entryComponents: [
-    MyApp,
-    // ChatPage,
-    // GroupsPage,
-    // FriendsPage,
-    // ChangePasswordPage,
-    // SettingsPage,
-    // EditProfilePage,
-    // ChatWallpaperPage,
-    // SettingsGroupsPage,
-    // GroupInfoPage,
-    // WelcomePage,
-    // SignupPage,
-    // LoginPage,
-    // ChatsendPage,
-    // ContactInfoPage,
-    // ForgotPasswordPage,
-    // SignupEmailPage,
-    // PrivatePoliyPage,
-    // SearchGroupsPage,
-    // AddGroupPage,
-    // AddFriendsPage,
-    // PendingFriendsPage,
-    // PendingGroupsPage,
-    // AboutPage,
-    // StatusPage,
-    // TwtchatPage,
-    // MyStatusPage,
+    MyApp
   ],
   providers: [
     ImagePicker,
@@ -157,7 +81,6 @@ import {PhotoViewer} from "@ionic-native/photo-viewer";
     Device,
     UserService,
     PagerService,
-
     // RequestService,
     CommonService,
     Camera,
@@ -172,11 +95,13 @@ import {PhotoViewer} from "@ionic-native/photo-viewer";
     // File,
     CommonModalsService,
 EmojiProvider,
+    InAppBrowser,
     ToastAlertsService,
     StatusBar,
     Facebook,
     StreamingMedia,
     FileChooser,
+    Geolocation,
     GooglePlus,
     SplashScreen,Media,
     {provide: ErrorHandler, useClass: IonicErrorHandler}

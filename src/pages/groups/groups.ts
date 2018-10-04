@@ -44,4 +44,7 @@ export class GroupsPage {
   pendinggroups() {
     this.navCtrl.push("PendingGroupsPage");
   }
+
+
+
 }
