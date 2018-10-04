@@ -1148,11 +1148,11 @@ export class ChatsendPage {
 
     let url = this.serverURL + "messageFile.php";
 
-    let targetPath = this.dcoumentId;
+    let targetPath = this.file.dataDirectory + this.dcoumentId;
 
     const id = new Date();
     let newMsg;
-    let filename = this.dcoumentId.substr(this.dcoumentId.lastIndexOf('/')+1);
+    let filename = this.dcoumentId;
 
     if (this.currentUser.photoProfil) {
 
@@ -1216,28 +1216,82 @@ export class ChatsendPage {
     const fileTransfer: TransferObject = this.transfer.create();
 
     console.log(targetPath)
-    // this.loading_ = this.loadingCtrl.create({
-    //   content: 'Uploading...',
-    // });
-    // this.loading_.present();
+    this.loading_ = this.loadingCtrl.create({
+      content: 'Uploading...',
+    });
+    this.loading_.present();
     fileTransfer.upload(targetPath, url, options).then((data: any) => {
       this.loading_.dismissAll();
       this.getGroups_();
       this.presentToast('Group Created Successfully.');
       console.log('Group Created Successfully.');
-      alert(JSON.stringify(data))
+      console.log(JSON.stringify(data))
 
     }, err => {
       this.presentToast('Error while uploading file.');
       console.log('Error while uploading file.');
       console.log(JSON.stringify(err))
     });
-    // this.getGroups_();
-    // this.messages.push(newMsg);
-    // this.scrollToBottom();
+// this.getGroups_();
+// this.messages.push(newMsg);
+// this.scrollToBottom();
 
 
   }
+
+  getDoc() {
+    let options = {
+      sourceType: this.camera.PictureSourceType.SAVEDPHOTOALBUM,
+      mediaType: this.camera.MediaType.ALLMEDIA,
+      destinationType: this.camera.DestinationType.FILE_URI
+    };
+
+// Get the data of an image
+    this.camera.getPicture(options).then((imagePath) => {
+
+
+// if (this.platform.is('android')) {
+      this.file.resolveLocalFilesystemUrl('file://' + imagePath,).then((FE: FileEntry) => {
+
+        console.log("lasrimage")
+// console.log(  FE.isFile)
+        FE.file(file => {
+
+          let capturedFile = file;
+          let fileName = capturedFile.name;
+          let dir = capturedFile['localURL'].split('/');
+          dir.pop();
+          let fromDirectory = dir.join('/');
+          let toDirectory = this.file.dataDirectory;
+
+          this.file.copyFile(fromDirectory, fileName, toDirectory, fileName).then((res) => {
+            this.dcoumentId = fileName;
+            this.uploadDocument('doc');
+// this.storeMediaFiles([{name: fileName, size: capturedFile.size}]);
+          }, err => {
+            console.log('err: ', err);
+          });
+
+
+        })
+
+      }, err => {
+        console.log("nae chala");
+        console.log(JSON.stringify(err));
+
+
+      });
+
+    }, err => {
+      console.log("YA Allah MADAD");
+      console.log(JSON.stringify(err));
+
+
+    })
+      .catch(e => console.log(e));
+  }
+
+
 
   getGroups_() {
     if (localStorage.getItem('currentUser')) {
@@ -1398,7 +1452,7 @@ export class ChatsendPage {
   //     .catch(e => console.log(e));
   // }
 
-  getDoc() {
+  getDoc_() {
     this.fileChooser.open()
       .then((uri) =>
       {

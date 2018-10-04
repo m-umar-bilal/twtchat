@@ -21,11 +21,29 @@
         <h2 class="center">{{friend?.name}}</h2>
 
 
-        <p *ngIf="friend?.messages" style="margin-top: 10px;">
+        <!--<p *ngIf="friend?.messages" style="margin-top: 10px;">-->
+          <!--{{friend?.messages[0]?.message}}</p>-->
+        <p style="margin-top: 10px;"
+           *ngIf="friend?.messages&&friend?.messages.length>0&&friend?.messages[0]&&friend?.messages[0].type_message==='text'">
           {{friend?.messages[0]?.message}}</p>
+        <p style="margin-top: 10px;"
+           *ngIf="friend?.messages&&friend?.messages.length>0&&friend?.messages[0]&&friend?.messages[0].type_message==='video'">
+          <ion-icon name="videocam"></ion-icon> Video</p>
+        <p style="margin-top: 10px;"
+           *ngIf="friend?.messages&&friend?.messages.length>0&&friend?.messages[0]&&friend?.messages[0].type_message==='photo'">
+          <ion-icon name="image"></ion-icon> Photo</p>
+        <p style="margin-top: 10px;"
+           *ngIf="friend?.messages&&friend?.messages.length>0&&friend?.messages[0]&&friend?.messages[0].type_message==='location'">
+          <ion-icon name="locate"></ion-icon> Location</p>
+        <p style="margin-top: 10px;"
+           *ngIf="friend?.messages&&friend?.messages.length>0&&friend?.messages[0]&&friend?.messages[0].type_message==='doc'">
+          <ion-icon name="document"></ion-icon> Document</p>
+        <p style="margin-top: 10px;"
+           *ngIf="friend?.messages&&friend?.messages.length>0&&friend?.messages[0]&&friend?.messages[0].type_message==='audio'">
+          <ion-icon name="mic"></ion-icon> Audio</p>
+        <p item-end style="margin-top: -30px">{{friend?.date_lastMessage| timeAgo}}</p>
         <p *ngIf="friend.messages==null" style="margin-top: 10px;"></p>
         <p item-end *ngIf="friend?.unread" style="margin-top: -30px; margin-right: -30px;">{{friend?.date_lastMessage| timeAgo}}</p>
-        <p item-end *ngIf="!friend?.unread" style="margin-top: -30px;">{{friend?.date_lastMessage| timeAgo}}</p>
         <p style="margin-top: 30px;" *ngIf="friend?.unread&&friend?.unread!='0'" class="num" item-end>{{friend?.unread}}</p>
 
       </ion-item>
