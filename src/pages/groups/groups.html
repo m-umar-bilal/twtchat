@@ -33,7 +33,7 @@
       <ion-item *ngIf="group.private==='0'" navPush="ChatsendPage"
                 [navParams]="{page:'groups',data:group}">
         <ion-thumbnail item-start>
-          <img [src]="serverURL+group?.directory+group?.photo_url||'../../assets/imgs/880.png'" width="200px"/>
+          <img [src]="serverURL+group?.directory+group?.photo_url||'assets/imgs/880.png'" width="200px"/>
         </ion-thumbnail>
         <h2 class="center">{{group?.name}}</h2>
         <p style="margin-top: 10px;"
@@ -68,7 +68,7 @@
       <ion-item *ngIf="group.private==='1'" navPush="ChatsendPage"
                 [navParams]="{page:'groups',data:group}">
         <ion-thumbnail item-start>
-          <img [src]="serverURL+group?.directory+group?.photo_url||'../../assets/imgs/880.png'" width="200px"/>
+          <img [src]="serverURL+group?.directory+group?.photo_url||'assets/imgs/880.png'" width="200px"/>
         </ion-thumbnail>
         <h2 class="center">{{group?.name}}</h2>
         <p style="margin-top: 10px;"

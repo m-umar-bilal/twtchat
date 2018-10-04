@@ -12,7 +12,7 @@
 <ion-content>
 
   <img class="img" (click)="presentActionSheet()" *ngIf="currentUser?.photoProfil"  [src]="serverURL+currentUser?.photoProfil"  width="200px" />
-  <img class="img" (click)="presentActionSheet()" *ngIf="!currentUser?.photoProfil" [src]="'../../assets/imgs/880.png'"  width="200px" />
+  <img class="img" (click)="presentActionSheet()" *ngIf="!currentUser?.photoProfil" [src]="'assets/imgs/880.png'"  width="200px" />
   <form novalidate #f="ngForm">
 
   <ion-list style="margin-top: 50px;">

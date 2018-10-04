@@ -28,8 +28,8 @@
       <ion-item *ngFor="let friend of this.svc.userData['users']| search : terms" navPush="ContactInfoPage"
                 [navParams]="{id:friend.user_id}">
           <ion-thumbnail item-start>
-        <img *ngIf="friend?.photo_profil" [src]="serverURL+friend?.directory+friend?.photo_profil||'../../assets/imgs/880.png'" width="200px" />
-        <img *ngIf="!friend?.photo_profil" [src]="'../../assets/imgs/880.png'" width="200px" />
+        <img *ngIf="friend?.photo_profil" [src]="serverURL+friend?.directory+friend?.photo_profil||'assets/imgs/880.png'" width="200px" />
+        <img *ngIf="!friend?.photo_profil" [src]="'assets/imgs/880.png'" width="200px" />
 
 
         </ion-thumbnail>

@@ -47,7 +47,7 @@
               [navParams]="user">
       <ion-thumbnail item-start>
         <img width="200px" *ngIf="user?.photo_profil" [src]="serverURL+user?.directory+user?.photo_profil" alt="" src="">
-        <img width="200px" *ngIf="!user?.photo_profil" [src]="'../../assets/imgs/880.png'" alt="" src="">
+        <img width="200px" *ngIf="!user?.photo_profil" [src]="'assets/imgs/880.png'" alt="" src="">
       </ion-thumbnail>
       <h2>{{user.name}}        <button style="float: right" color="primary" *ngIf="admin&&currentUser.user_id!=user.id"
                                        (tap)="deleteFromGroup(user)" ion-button outline icon-only>
@@ -62,7 +62,7 @@
 
     <!--<ion-item>-->
     <!--<ion-thumbnail item-start>-->
-    <!--<img src="../../assets/imgs/880.png" width="200px" />-->
+    <!--<img src="assets/imgs/880.png" width="200px" />-->
     <!--</ion-thumbnail>-->
     <!--<h2>Faisal</h2>-->
     <!--<p>Desc</p>-->

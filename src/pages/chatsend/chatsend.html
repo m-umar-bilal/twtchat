@@ -25,14 +25,14 @@
       <img class="user-img" *ngIf="msg?.photo_profil&&msg.user_id+'' === currentUser.user_id+''"
            [src]="serverURL+msg?.directory+msg?.photo_profil" alt="" src="">
       <img class="user-img" *ngIf="!msg?.photo_profil&&msg.user_id+'' === currentUser.user_id+''"
-           [src]="'../../assets/imgs/880.png'" alt="" src="">
+           [src]="'assets/imgs/880.png'" alt="" src="">
 
       <img class="user-img" navPush="ContactInfoPage"
            [navParams]="{id:msg.user_id}" *ngIf="msg.user_id+'' !== currentUser.user_id+''&&msg?.photo_profil"
            [src]="serverURL+msg?.directory+msg?.photo_profil" alt="" src="">
       <img class="user-img" navPush="ContactInfoPage"
            [navParams]="{id:msg.user_id}" *ngIf="msg.user_id+'' !== currentUser.user_id+''&&!msg?.photo_profil"
-           [src]="'../../assets/imgs/880.png'" alt="" src="">
+           [src]="'assets/imgs/880.png'" alt="" src="">
       <ion-spinner name="dots" *ngIf="msg.status === 'pending'"></ion-spinner>
       <div class="msg-detail">
         <div class="msg-info" *ngIf="msg.user_id+'' !== currentUser.user_id+''" navPush="ContactInfoPage"
@@ -139,10 +139,10 @@
     <!--<ion-card>-->
     <!--<ion-card-content>-->
     <!--<ion-card-title>-->
-    <button ion-button primary (click)="released()" *ngIf="recording">
+    <button ion-button primary (tap)="released()" *ngIf="recording">
       <ion-icon name="mic-off"></ion-icon>&nbsp;&nbsp;Stop Record
     </button>
-    <button ion-button primary (click)="pressed()" *ngIf="!recording">
+    <button ion-button primary (tap)="pressed()" *ngIf="!recording">
       <ion-icon name="mic"></ion-icon>&nbsp;&nbsp;Start Record
     </button>
     <!--</ion-card-title>-->

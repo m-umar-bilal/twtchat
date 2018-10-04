@@ -22,6 +22,8 @@ import {PhotoViewer} from "@ionic-native/photo-viewer";
 import {InAppBrowser} from "@ionic-native/in-app-browser";
 import {VideoEditor} from '@ionic-native/video-editor';
 import {Geolocation} from '@ionic-native/geolocation';
+import {AndroidPermissions} from "@ionic-native/android-permissions";
+import {platformBrowserDynamic} from "@angular/platform-browser-dynamic";
 
 declare let cordova: any;
 const MEDIA_FILES_KEY = 'mediaFiles';
@@ -77,7 +79,7 @@ export class ChatsendPage {
   private loading_: Loading;
   recordingInput: any;
   recording: any;
-  bgImage: any = "../../assets/imgs/bg0.png";
+  bgImage: any = "assets/imgs/bg0.png";
 
 
   filePathA: string;
@@ -87,7 +89,7 @@ export class ChatsendPage {
 
 
   curr_playing_file: MediaObject;
-  recStart: boolean;
+  recStart: boolean = false;
   private curfilename: string;
   private dcoumentId: string;
 
@@ -98,9 +100,10 @@ export class ChatsendPage {
               private camera: Camera, private transfer: Transfer, private file: File, private filePath: FilePath,
               public platform: Platform, private mediaCapture: MediaCapture, private pagerService: PagerService,
               private media: Media, private photoViewer: PhotoViewer, private iab: InAppBrowser,
-              public sanitizer: DomSanitizer,             private VideoEditor: VideoEditor,
+              public sanitizer: DomSanitizer, private VideoEditor: VideoEditor,
               private fileChooser: FileChooser,
-              private geolocation: Geolocation
+              private geolocation: Geolocation,
+              private androidPermissions: AndroidPermissions
   ) {
 
     if (localStorage.getItem('wallimg' + this.currentUser.user_id)) {
@@ -123,7 +126,7 @@ export class ChatsendPage {
   }
 
   ValidURL(str) {
-    var pattern  = /^(?:(?:https?|ftp):\/\/)(?:\S+(?::\S*)?@)?(?:(?!10(?:\.\d{1,3}){3})(?!127(?:\.​\d{1,3}){3})(?!169\.254(?:\.\d{1,3}){2})(?!192\.168(?:\.\d{1,3}){2})(?!172\.(?:1[​6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1​,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00​a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u​00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:\/[^\s]*)?$/i;
+    var pattern = /^(?:(?:https?|ftp):\/\/)(?:\S+(?::\S*)?@)?(?:(?!10(?:\.\d{1,3}){3})(?!127(?:\.​\d{1,3}){3})(?!169\.254(?:\.\d{1,3}){2})(?!192\.168(?:\.\d{1,3}){2})(?!172\.(?:1[​6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1​,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00​a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u​00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:\/[^\s]*)?$/i;
     // fragment locater
     if (!pattern.test(str)) {
       // alert("Please enter a valid URL.");
@@ -410,6 +413,7 @@ export class ChatsendPage {
           }
         })
   }
+
   sendChat_(message, obj) {
     let ty;
     if (this.navParams.get("page") === "private") {
@@ -509,6 +513,7 @@ export class ChatsendPage {
     //     }
     //   })
   }
+
   sendLocationMsg() {
 
     this.geolocation.getCurrentPosition().then((resp) => {
@@ -516,54 +521,54 @@ export class ChatsendPage {
       // resp.coords.longitude
 
 
-    let locmsg ='https://www.google.com/maps/place/'+resp.coords.latitude+','+resp.coords.longitude+'/@'+resp.coords.latitude+','+resp.coords.longitude+',13z';
+      let locmsg = 'https://www.google.com/maps/place/' + resp.coords.latitude + ',' + resp.coords.longitude + '/@' + resp.coords.latitude + ',' + resp.coords.longitude + ',13z';
 
-    // Mock message
-    const id = new Date();
-    let newMsg;
-    if (this.currentUser.photoProfil) {
+      // Mock message
+      const id = new Date();
+      let newMsg;
+      if (this.currentUser.photoProfil) {
 
-      let arr = this.currentUser.photoProfil.split('profil');
-      newMsg = {
-
-
-        create_date: id,
-        directory: arr[0],
-        message: locmsg,
-        mime: null,
-        name: this.currentUser.name,
-        name_file: null,
-        photo_profil: "profil" + arr[1],
-        type_message: "location",
-        unique_code: (id).getTime() + "" + this.currentUser.user_id + "" + this.groupData.id + "" + this.groupData.private,
-        user_id: this.currentUser.user_id,
-      };
-    }
-    else {
-      newMsg = {
+        let arr = this.currentUser.photoProfil.split('profil');
+        newMsg = {
 
 
-        create_date: id,
-        message: locmsg,
-        mime: null,
-        name: this.currentUser.name,
-        name_file: null,
-        type_message: "location",
-        unique_code: (id).getTime() + "" + this.currentUser.user_id + "" + this.groupData.id + "" + this.groupData.private,
-        user_id: this.currentUser.user_id,
-      };
-    }
-    this.sendChat_(locmsg, newMsg.unique_code);
+          create_date: id,
+          directory: arr[0],
+          message: locmsg,
+          mime: null,
+          name: this.currentUser.name,
+          name_file: null,
+          photo_profil: "profil" + arr[1],
+          type_message: "location",
+          unique_code: (id).getTime() + "" + this.currentUser.user_id + "" + this.groupData.id + "" + this.groupData.private,
+          user_id: this.currentUser.user_id,
+        };
+      }
+      else {
+        newMsg = {
 
-    this.messages.push(newMsg);
-    this.pagedItems.push(newMsg);
 
-    this.editorMsg = '';
-    this.scrollToBottom();
+          create_date: id,
+          message: locmsg,
+          mime: null,
+          name: this.currentUser.name,
+          name_file: null,
+          type_message: "location",
+          unique_code: (id).getTime() + "" + this.currentUser.user_id + "" + this.groupData.id + "" + this.groupData.private,
+          user_id: this.currentUser.user_id,
+        };
+      }
+      this.sendChat_(locmsg, newMsg.unique_code);
 
-    if (!this.showEmojiPicker) {
-      this.focus();
-    }
+      this.messages.push(newMsg);
+      this.pagedItems.push(newMsg);
+
+      this.editorMsg = '';
+      this.scrollToBottom();
+
+      if (!this.showEmojiPicker) {
+        this.focus();
+      }
     }).catch((error) => {
       console.log('Error getting location', error);
     });
@@ -1004,7 +1009,8 @@ export class ChatsendPage {
     result;
     const id = new Date();
     let newMsg;
-    let filename =  result.substr(result.lastIndexOf('/')+1);;
+    let filename = result.substr(result.lastIndexOf('/') + 1);
+    ;
 
     if (this.currentUser.photoProfil) {
 
@@ -1038,14 +1044,15 @@ export class ChatsendPage {
         unique_code: (id).getTime() + "" + this.currentUser.user_id + "" + this.groupData.id + "" + this.groupData.private,
         user_id: this.currentUser.user_id,
       };
-    };
+    }
+    ;
     this.messages.push(newMsg);
     this.pagedItems.push(newMsg)
     // alert(JSON.stringify(newMsg.message));
     this.scrollToBottom();
     this.loading.dismissAll();
 
-    this.uploadVideo(result,'video',newMsg);
+    this.uploadVideo(result, 'video', newMsg);
     // $.mobile.loading("hide");
 
     // var v = "<video controls='controls' preload='metadata' class='allVideo'>";
@@ -1068,21 +1075,15 @@ export class ChatsendPage {
     });
 
 
-
-
-
   }
 
 
-
-
-
-  public uploadVideo(result,type,newMsg) {
+  public uploadVideo(result, type, newMsg) {
 
     let url = this.serverURL + "messageFile.php";
 
     let targetPath = result;
-    let filename =  targetPath.substr(targetPath.lastIndexOf('/')+1);
+    let filename = targetPath.substr(targetPath.lastIndexOf('/') + 1);
     //
 
     let ty;
@@ -1139,7 +1140,6 @@ export class ChatsendPage {
       console.log(JSON.stringify(err))
     });
     this.getGroups__();
-
 
 
   }
@@ -1292,7 +1292,6 @@ export class ChatsendPage {
   }
 
 
-
   getGroups_() {
     if (localStorage.getItem('currentUser')) {
       if (!this.loading_) {
@@ -1371,13 +1370,14 @@ export class ChatsendPage {
         {
           text: "Load from Gallery",
           handler: () => {
-            this.camera.getPicture({ quality: 50,
+            this.camera.getPicture({
+              quality: 50,
               correctOrientation: true,
               destinationType: this.camera.DestinationType.FILE_URI,
               encodingType: this.camera.EncodingType.JPEG,
               sourceType: this.camera.PictureSourceType.PHOTOLIBRARY,
               mediaType: this.camera.MediaType.VIDEO
-            }).then((res)=>{
+            }).then((res) => {
 
               this.onVideoSendDataSuccess(res);
             });
@@ -1454,27 +1454,26 @@ export class ChatsendPage {
 
   getDoc_() {
     this.fileChooser.open()
-      .then((uri) =>
-      {
+      .then((uri) => {
 
 
-      // if (this.platform.is('android')) {
-      // this.file.resolveLocalFilesystemUrl('file://' + imagePath,).then((FE: FileEntry) => {
-      //
-      //   console.log("lasrimage")
-      //   // console.log(  FE.isFile)
-      //   FE.file(file => {
-      //
-      //     let capturedFile = file;
-      //     let fileName = capturedFile.name;
-      //     let dir = capturedFile['localURL'].split('/');
-      //     dir.pop();
-      //     let fromDirectory = dir.join('/');
-      //     let toDirectory = this.file.dataDirectory;
-      //
-      //     this.file.copyFile(fromDirectory, fileName, toDirectory, fileName).then((res) => {
-            this.dcoumentId = uri;
-            this.uploadDocument('doc');
+        // if (this.platform.is('android')) {
+        // this.file.resolveLocalFilesystemUrl('file://' + imagePath,).then((FE: FileEntry) => {
+        //
+        //   console.log("lasrimage")
+        //   // console.log(  FE.isFile)
+        //   FE.file(file => {
+        //
+        //     let capturedFile = file;
+        //     let fileName = capturedFile.name;
+        //     let dir = capturedFile['localURL'].split('/');
+        //     dir.pop();
+        //     let fromDirectory = dir.join('/');
+        //     let toDirectory = this.file.dataDirectory;
+        //
+        //     this.file.copyFile(fromDirectory, fileName, toDirectory, fileName).then((res) => {
+        this.dcoumentId = uri;
+        this.uploadDocument('doc');
         //     // this.storeMediaFiles([{name: fileName, size: capturedFile.size}]);
         //   }, err => {
         //     console.log('err: ', err);
@@ -1551,33 +1550,69 @@ export class ChatsendPage {
 
 
   pressed() {
-    this.recording = true;
-    console.log('Longpress');
-    //voiceNum INCREASE
-    let nItem = localStorage.getItem('recordvoiceNum');
-    let numstr = 0;
-    if (nItem == null) {
-      numstr = 1;
-    }
-    else {
-      let numstr = parseInt(nItem, 10)
-      numstr = numstr + 1;
-    }
-    //Create media file
-    this.curfilename = 'audio' + numstr + '.m4a';
-    this.curr_playing_file = this.createAudioFile(this.curfilename);
-    localStorage.setItem('recordvoiceNum', numstr.toString());
-    try {
-      console.log('start Recording');
-      if (this.recStart == false) {
-        this.curr_playing_file.startRecord();
-        this.recStart = true;
-      }
-    } catch (e) {
-      console.log('record error');
-      console.log(e.message);
-    }
 
+
+    if (this.platform.is('android')) {
+
+      this.androidPermissions.requestPermissions([this.androidPermissions.PERMISSION.RECORD_AUDIO, this.androidPermissions.PERMISSION.WRITE_EXTERNAL_STORAGE]).then((any) => {
+        this.recording = true;
+        console.log('Longpress');
+        //voiceNum INCREASE
+        let nItem = localStorage.getItem('recordvoiceNum');
+        let numstr = 0;
+        if (nItem == null) {
+          numstr = 1;
+        }
+        else {
+          let numstr = parseInt(nItem, 10)
+          numstr = numstr + 1;
+        }
+        //Create media file
+        this.curfilename = 'audio' + 'record' + new Date().getDate() + new Date().getMonth() + new Date().getFullYear() + new Date().getHours() + new Date().getMinutes() + new Date().getSeconds() + '.m4a';
+        this.curr_playing_file = this.createAudioFile(this.curfilename);
+        localStorage.setItem('recordvoiceNum', numstr.toString());
+        try {
+          console.log('start Recording');
+          if (this.recStart == false) {
+            this.curr_playing_file.startRecord();
+            this.recStart = true;
+          }
+        } catch (e) {
+          console.log('record error');
+          console.log(e.message);
+        }
+
+      }, err => {
+        alert("Permission not given");
+      })
+    } else {
+      this.recording = true;
+      console.log('Longpress');
+      //voiceNum INCREASE
+      let nItem = localStorage.getItem('recordvoiceNum');
+      let numstr = 0;
+      if (nItem == null) {
+        numstr = 1;
+      }
+      else {
+        let numstr = parseInt(nItem, 10)
+        numstr = numstr + 1;
+      }
+      //Create media file
+      this.curfilename = 'audio' + 'record' + new Date().getDate() + new Date().getMonth() + new Date().getFullYear() + new Date().getHours() + new Date().getMinutes() + new Date().getSeconds() + '.m4a';
+      this.curr_playing_file = this.createAudioFile(this.curfilename);
+      localStorage.setItem('recordvoiceNum', numstr.toString());
+      try {
+        console.log('start Recording');
+        if (this.recStart == false) {
+          this.curr_playing_file.startRecord();
+          this.recStart = true;
+        }
+      } catch (e) {
+        console.log('record error');
+        console.log(e.message);
+      }
+    }
 
   }
 
@@ -1697,6 +1732,8 @@ export class ChatsendPage {
 
         const id = new Date();
         let newMsg;
+        let newPath = this.file.externalRootDirectory + this.curfilename;
+        newPath = newPath.replace(/file:\/\//g, '');
 
 
         if (this.currentUser.photoProfil) {
@@ -1708,10 +1745,10 @@ export class ChatsendPage {
             create_date: id,
             directory: arr[0],
             local: true,
-            message: this.file.externalRootDirectory + this.curfilename,
+            message: newPath,
             mime: "audio/x-m4a",
             name: this.currentUser.name,
-            name_file: name,
+            name_file: this.curfilename,
             photo_profil: "profil" + arr[1],
             type_message: type,
             unique_code: (id).getTime() + "" + this.currentUser.user_id + "" + this.groupData.id + "" + this.groupData.private,
@@ -1723,10 +1760,10 @@ export class ChatsendPage {
 
             local: true,
             create_date: id,
-            message: this.file.externalRootDirectory + this.curfilename,
+            message: newPath,
             mime: "audio/x-m4a",
             name: this.currentUser.name,
-            name_file: name,
+            name_file: this.curfilename,
             type_message: type,
             unique_code: (id).getTime() + "" + this.currentUser.user_id + "" + this.groupData.id + "" + this.groupData.private,
             user_id: this.currentUser.user_id,
@@ -1752,11 +1789,11 @@ export class ChatsendPage {
 
         let options = {
           fileKey: "file",
-          fileName: name,
+          fileName: this.curfilename,
           chunkedMode: false,
-          mimeType: "audio/mp4",
+          mimeType: "audio/x-m4a",
           httpMethod: 'POST',
-          params: {...params, 'fileName': name}
+          params: {...params, 'fileName': this.curfilename}
         };
 
 
@@ -1778,16 +1815,17 @@ export class ChatsendPage {
         console.log('filename' + this.file.externalRootDirectory + this.curfilename);
         let path = this.file.externalRootDirectory + this.curfilename;
 
+        // alert(path);
 
-        this.loading_ = this.loadingCtrl.create({
-          content: 'Uploading...',
-        });
-        this.loading_.present();
+        // this.loading_ = this.loadingCtrl.create({
+        //   content: 'Uploading...',
+        // });
+        // this.loading_.present();
 
         fileTransfer.upload(path, url, options).then((result) => {
-            this.loading_.dismissAll();
+            // this.loading_.dismissAll();
             this.recordingInput = false;
-            this.getGroups_();
+            this.getGroups__();
 
 
             console.log(JSON.stringify(result));
@@ -1796,13 +1834,14 @@ export class ChatsendPage {
 
           }
         ).catch(error => {
+          this.recordingInput = false;
           console.log('uploaderror');
           console.log(error.message);
           this.recStart = false;
         });
-        // this.messages.push(newMsg);
-        // this.pagedItems.push(newMsg);
-        // this.scrollToBottom();
+        this.messages.push(newMsg);
+        this.pagedItems.push(newMsg);
+        this.scrollToBottom();
       }
       catch (error) {
         console.log('stoperror');

@@ -29,7 +29,7 @@
                   [navParams]="{id:c.user_id}"
       >
         <img *ngIf="c?.photo_profil" [src]="serverURL+c?.directory+c?.photo_profil">
-        <img *ngIf="!c?.photo_profil" [src]="'../../assets/imgs/880.png'" />
+        <img *ngIf="!c?.photo_profil" [src]="'assets/imgs/880.png'" />
 
       </ion-avatar>
       <h2> <span navPush="ContactInfoPage"

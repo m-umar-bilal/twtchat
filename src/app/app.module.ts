@@ -58,6 +58,7 @@ import {PagerService} from "../services";
 import {VideoPlayer} from "@ionic-native/video-player";
 import {PhotoViewer} from "@ionic-native/photo-viewer";
 import {InAppBrowser} from "@ionic-native/in-app-browser";
+import {AndroidPermissions} from "@ionic-native/android-permissions";
 @NgModule({
   declarations: [
     MyApp
@@ -93,6 +94,7 @@ import {InAppBrowser} from "@ionic-native/in-app-browser";
     VideoPlayer,
     PhotoViewer,
     // File,
+    AndroidPermissions,
     CommonModalsService,
 EmojiProvider,
     InAppBrowser,
