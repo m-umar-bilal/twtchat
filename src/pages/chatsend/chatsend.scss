@@ -7,7 +7,9 @@
 page-chatsend {
   $userBackgroundColor: #387ef5;
   $toUserBackgroundColor: #fff;
-
+  .padding-style{
+    padding-left: 10px;
+  }
   ion-content .scroll-content {
     background: transparent;
   }
