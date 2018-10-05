@@ -21,6 +21,7 @@ export class GroupsPage {
   currentUser = JSON.parse(localStorage.getItem('currentUser'));
   public serverURL: string = environment.API_URL;
   private loading: Loading;
+  deletedGroup: any = {};
 
   constructor(public navCtrl: NavController, public navParams: NavParams,  private toastsAlertService: ToastAlertsService,
   public events: Events,public svc:RestService, public loadingCtrl: LoadingController) {
@@ -29,6 +30,14 @@ export class GroupsPage {
       console.log('Welcome', user, 'at', time);
       this.currentUser = user;
     });
+    events.subscribe('group:deleted', (data, time) => {
+      // user and time are the same arguments passed in `events.publish(user, time)`
+      this.deletedGroup = data;
+
+    });
+    if (localStorage.getItem(this.currentUser.user_id + 'deletedGroups')) {
+      this.deletedGroup = JSON.parse(localStorage.getItem(this.currentUser.user_id + 'deletedGroups'));
+    }
   }
 
 

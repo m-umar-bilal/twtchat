@@ -8,7 +8,7 @@
     </ion-buttons>
     <ion-title>Groups</ion-title>
     <ion-buttons start>
-      <button  (click)="pendinggroups()" id="notification-button" ion-button icon-only>
+      <button (click)="pendinggroups()" id="notification-button" ion-button icon-only>
         <ion-icon name="notifications">
           <ion-badge id="notifications-badge"
                      *ngIf="this.svc?.userData?.myGroups_pending&&this.svc?.userData?.myGroups_pending.length>0"
@@ -41,19 +41,29 @@
           {{group?.messages[0]?.message}}</p>
         <p style="margin-top: 10px;"
            *ngIf="group?.messages&&group?.messages.length>0&&group?.messages[0]&&group?.messages[0].type_message==='video'">
-          <ion-icon name="videocam"></ion-icon> Video</p>
+          <ion-icon name="videocam"></ion-icon>
+          Video
+        </p>
         <p style="margin-top: 10px;"
            *ngIf="group?.messages&&group?.messages.length>0&&group?.messages[0]&&group?.messages[0].type_message==='photo'">
-          <ion-icon name="image"></ion-icon> Photo</p>
+          <ion-icon name="image"></ion-icon>
+          Photo
+        </p>
         <p style="margin-top: 10px;"
            *ngIf="group?.messages&&group?.messages.length>0&&group?.messages[0]&&group?.messages[0].type_message==='location'">
-          <ion-icon name="locate"></ion-icon> Location</p>
+          <ion-icon name="locate"></ion-icon>
+          Location
+        </p>
         <p style="margin-top: 10px;"
            *ngIf="group?.messages&&group?.messages.length>0&&group?.messages[0]&&group?.messages[0].type_message==='doc'">
-          <ion-icon name="document"></ion-icon> Document</p>
+          <ion-icon name="document"></ion-icon>
+          Document
+        </p>
         <p style="margin-top: 10px;"
            *ngIf="group?.messages&&group?.messages.length>0&&group?.messages[0]&&group?.messages[0].type_message==='audio'">
-          <ion-icon name="mic"></ion-icon> Audio</p>
+          <ion-icon name="mic"></ion-icon>
+          Audio
+        </p>
         <p item-end style="margin-top: -30px">{{group?.date_lastMessage| timeAgo}}</p>
       </ion-item>
     </div>
@@ -65,8 +75,10 @@
     <ion-icon class="bar" name="lock" item-start> PRIVATE GROUPS</ion-icon>
     <div *ngFor="let group of this.svc.userData.groups">
 
-      <ion-item *ngIf="group.private==='1'" navPush="ChatsendPage"
-                [navParams]="{page:'groups',data:group}">
+      <ion-item
+        *ngIf="group.private==='1'&&!this.deletedGroup||group.private==='1'&&!this.deletedGroup[group.id+'-'+group.create_date]"
+        navPush="ChatsendPage"
+        [navParams]="{page:'groups',data:group}">
         <ion-thumbnail item-start>
           <img [src]="serverURL+group?.directory+group?.photo_url||'assets/imgs/880.png'" width="200px"/>
         </ion-thumbnail>
@@ -76,19 +88,29 @@
           {{group?.messages[0]?.message}}</p>
         <p style="margin-top: 10px;"
            *ngIf="group?.messages&&group?.messages.length>0&&group?.messages[0]&&group?.messages[0].type_message==='video'">
-          <ion-icon name="videocam"></ion-icon> Video</p>
+          <ion-icon name="videocam"></ion-icon>
+          Video
+        </p>
         <p style="margin-top: 10px;"
            *ngIf="group?.messages&&group?.messages.length>0&&group?.messages[0]&&group?.messages[0].type_message==='photo'">
-          <ion-icon name="image"></ion-icon> Photo</p>
+          <ion-icon name="image"></ion-icon>
+          Photo
+        </p>
         <p style="margin-top: 10px;"
            *ngIf="group?.messages&&group?.messages.length>0&&group?.messages[0]&&group?.messages[0].type_message==='location'">
-          <ion-icon name="locate"></ion-icon> Location</p>
+          <ion-icon name="locate"></ion-icon>
+          Location
+        </p>
         <p style="margin-top: 10px;"
            *ngIf="group?.messages&&group?.messages.length>0&&group?.messages[0]&&group?.messages[0].type_message==='doc'">
-          <ion-icon name="document"></ion-icon> Document</p>
+          <ion-icon name="document"></ion-icon>
+          Document
+        </p>
         <p style="margin-top: 10px;"
            *ngIf="group?.messages&&group?.messages.length>0&&group?.messages[0]&&group?.messages[0].type_message==='audio'">
-          <ion-icon name="mic"></ion-icon> Audio</p>
+          <ion-icon name="mic"></ion-icon>
+          Audio
+        </p>
         <p item-end style="margin-top: -30px">{{group?.date_lastMessage| timeAgo}}</p>
       </ion-item>
     </div>

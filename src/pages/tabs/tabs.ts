@@ -43,7 +43,7 @@ export class TabsPage {
     }
 
 
-    this.sub = Observable.interval(5000)
+    this.sub = Observable.interval(10000)
       .subscribe((val) => {
         // console.log('called');
         this.getGroups_();
@@ -83,6 +83,23 @@ export class TabsPage {
   }
 
 
+  ionViewWillLeave() {
+    if (this.sub) {
+      this.sub.unsubscribe();
+    }
+  }
+
+  updateDeletedChat(id,date) {
+
+    if (localStorage.getItem(this.currentUser.user_id + 'deletedPrivates')) {
+
+      let deletedPrivates= JSON.parse(localStorage.getItem(this.currentUser.user_id + 'deletedPrivates'));
+      if(id+'-'+date in  deletedPrivates&& deletedPrivates[id+'-'+date]!= undefined){
+        deletedPrivates[id+'-'+date]=undefined
+        localStorage.setItem(id + 'deletedPrivates', JSON.stringify(deletedPrivates))}
+    }
+
+  }
   getGroups_() {
     if (localStorage.getItem('currentUser')) {
       this.svc.getGroups(this.currentUser.email, this.currentUser.password)
@@ -94,6 +111,9 @@ export class TabsPage {
               this.svc.userData = res;
               this.events.publish('chat:updated', res, Date.now());
 
+              // if(this.svc.userData.privates){
+              //   this.svc.userData.privates.forEach((item)=>this.updateDeletedChat())
+              // }
               console.log(res);
 
             } else {

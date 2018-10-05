@@ -16,9 +16,9 @@
 
   <ion-list>
     <div *ngFor="let group of this.svc.userData.groups| search : terms">
-      <ion-item-sliding *ngIf="group.private==='1'" navPush="GroupInfoPage"
-                        [navParams]="group" >
-          <ion-item>
+      <ion-item-sliding *ngIf="group.private==='1'" >
+          <ion-item navPush="GroupInfoPage"
+                    [navParams]="group" *ngIf="!this.deletedGroup||!this.deletedGroup[group.id+'-'+group.create_date]">
               <ion-thumbnail item-start>
                 <img [src]="serverURL+group?.directory+group?.photo_url||'assets/imgs/880.png'" width="200px"/>
               </ion-thumbnail>
@@ -26,7 +26,7 @@
                   <p style="margin-top: 10px;">{{group?.description}}</p>
           </ion-item>
           <ion-item-options>
-              <button on-click="goToPage10()" ion-button color="danger"><ion-icon style="font-size: 40px;" name="trash"></ion-icon>Delete</button>
+              <button (click)="deleteGroup(group.id,group.create_date)" ion-button color="danger"><ion-icon style="font-size: 40px;" name="trash"></ion-icon>Delete</button>
            </ion-item-options>
          </ion-item-sliding>
     </div>

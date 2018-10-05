@@ -280,7 +280,6 @@ export class RestService {
     const body = new HttpParams()
       .set('email', email)
       .set('array_messages', "[]")
-      .set('status', status)
       .set('password', password);
 
     console.log(body.toString());
