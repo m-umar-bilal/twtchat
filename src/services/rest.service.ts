@@ -414,6 +414,42 @@ export class RestService {
       }
     );
   }
+  deletePrivateChat(email, password, id) {
+    const body = new HttpParams()
+      .set('email', email)
+      .set('Typ', 'Private')
+      .set('typ', 'private')
+      .set('c_id', id)
+      .set('password', password);
+
+    console.log(body.toString());
+    return this.http.post(this.serverURL + 'delchat.php',
+
+      body.toString(),
+      {
+        headers: new HttpHeaders()
+          .set('Content-Type', 'application/x-www-form-urlencoded')
+      }
+    );
+  }
+  deleteGroupChat(email, password, id) {
+    const body = new HttpParams()
+      .set('email', email)
+      .set('Typ', 'Group')
+      .set('typ', 'group')
+      .set('g_id', id)
+      .set('password', password);
+
+    console.log(body.toString());
+    return this.http.post(this.serverURL + 'delchat.php',
+
+      body.toString(),
+      {
+        headers: new HttpHeaders()
+          .set('Content-Type', 'application/x-www-form-urlencoded')
+      }
+    );
+  }
 
   changeNotify(email, password, status) {
     const body = new HttpParams()

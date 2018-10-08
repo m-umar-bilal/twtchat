@@ -1,7 +1,7 @@
 import {Component} from '@angular/core';
-import {Events, IonicPage, NavController, NavParams} from 'ionic-angular';
+import {Events, IonicPage, LoadingController, NavController, NavParams} from 'ionic-angular';
 import {ChatsendPage} from '../chatsend/chatsend';
-import {RestService} from "../../services";
+import {RestService, ToastAlertsService} from "../../services";
 import {environment} from "../../env";
 
 @IonicPage()
@@ -15,7 +15,8 @@ export class ChatPage {
   deletedChat = {};
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
-              public events: Events, public svc: RestService) {
+              public events: Events, public svc: RestService, public loadingCtrl: LoadingController,
+              public toastsAlertService: ToastAlertsService,) {
     events.subscribe('user:updated', (user, time) => {
       // user and time are the same arguments passed in `events.publish(user, time)`
       console.log('Welcome', user, 'at', time);
@@ -35,21 +36,47 @@ export class ChatPage {
     this.navCtrl.push("ChatsendPage");
   }
 
-  deleteChat(id, date) {
+  private presentToast(text) {
+    let toast = this.toastsAlertService.createToast(text
+    );
+    toast.present();
+  }
 
-    if (this.deletedChat) {
+  deleteChat(id, date, private_id) {
 
-      let str = id + '-' + date;
-      this.deletedChat[str] = true;
-      localStorage.setItem(this.currentUser.user_id + 'deletedPrivates', JSON.stringify(this.deletedChat))
-    }
-    else {
-      let str = id + '-' + date;
+    let loader = this.loadingCtrl.create({
+      spinner: 'hide',
+    });
+    loader.present();
 
-      this.deletedChat[str] = true;
 
-      localStorage.setItem(this.currentUser.user_id + 'deletedPrivates', JSON.stringify(JSON.stringify(this.deletedChat)))
-    }
+    this.svc.deletePrivateChat(this.currentUser.email, this.currentUser.password, private_id)
+      .subscribe((res: any) => {
+          loader.dismiss();
+          this.presentToast("Chat deleted.");
+
+
+          if (this.deletedChat) {
+
+            let str = id + '-' + date;
+            this.deletedChat[str] = true;
+            localStorage.setItem(this.currentUser.user_id + 'deletedPrivates', JSON.stringify(this.deletedChat))
+          }
+          else {
+            let str = id + '-' + date;
+
+            this.deletedChat[str] = true;
+
+            localStorage.setItem(this.currentUser.user_id + 'deletedPrivates', JSON.stringify(JSON.stringify(this.deletedChat)))
+          }
+
+        },
+        err => {
+          loader.dismiss();
+
+          this.presentToast("Error deleting chat");
+        })
+
 
   }
 
