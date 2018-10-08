@@ -32,7 +32,7 @@ import { VideoEditor } from '@ionic-native/video-editor';
 
 //MODULES
 
-
+import { Diagnostic } from '@ionic-native/diagnostic';
 //SERVICES
 import {
   CommonModalsService,
@@ -86,6 +86,7 @@ import {AndroidPermissions} from "@ionic-native/android-permissions";
     CommonService,
     Camera,
     File,
+    Diagnostic,
     Transfer,
     FilePath,
     SecureStorage,

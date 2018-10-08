@@ -1,11 +1,11 @@
 import {Component, ElementRef, ViewChild} from '@angular/core';
 import {
-  ActionSheetController, Content, Events, IonicPage, Loading, LoadingController, NavController,
+  ActionSheetController, AlertController, Content, Events, IonicPage, Loading, LoadingController, NavController,
   NavParams, Platform
 } from 'ionic-angular';
 import {ContactInfoPage} from '../contact-info/contact-info';
 import {environment} from "../../env";
-import {RestService} from "../../services";
+import {RestService, ToastAlertsService} from "../../services";
 import {animate, state, style, transition, trigger} from "@angular/animations";
 // import {cordova} from "../add-group/add-group";
 import {Transfer, TransferObject} from "@ionic-native/transfer";
@@ -24,6 +24,7 @@ import {VideoEditor} from '@ionic-native/video-editor';
 import {Geolocation} from '@ionic-native/geolocation';
 import {AndroidPermissions} from "@ionic-native/android-permissions";
 import {platformBrowserDynamic} from "@angular/platform-browser-dynamic";
+import {Diagnostic} from '@ionic-native/diagnostic';
 
 declare let cordova: any;
 const MEDIA_FILES_KEY = 'mediaFiles';
@@ -96,6 +97,7 @@ export class ChatsendPage {
 
   constructor(public navParams: NavParams, public navCtrl: NavController,
               public loadingCtrl: LoadingController,
+              public toastsAlertService: ToastAlertsService,
               private events: Events, private svc: RestService, public actionSheetCtrl: ActionSheetController,
               private camera: Camera, private transfer: Transfer, private file: File, private filePath: FilePath,
               public platform: Platform, private mediaCapture: MediaCapture, private pagerService: PagerService,
@@ -103,7 +105,10 @@ export class ChatsendPage {
               public sanitizer: DomSanitizer, private VideoEditor: VideoEditor,
               private fileChooser: FileChooser,
               private geolocation: Geolocation,
-              private androidPermissions: AndroidPermissions
+              private androidPermissions: AndroidPermissions,
+              private alertCtrl: AlertController,
+              private diagnostic: Diagnostic
+
   ) {
 
     if (localStorage.getItem('wallimg' + this.currentUser.user_id)) {
@@ -209,7 +214,36 @@ export class ChatsendPage {
           icon: "locate",
 
           handler: () => {
-            this.sendLocationMsg();
+
+
+            this.diagnostic.isGpsLocationEnabled().then(state => {
+              if (!state) {
+                let confirm = this.alertCtrl.create({
+                  title: '<b>Location</b>',
+                  message: 'Location information is unavaliable on this device. Go to Settings to enable Location.',
+                  buttons: [
+                    {
+                      text: 'cancel',
+                      role: 'Cancel',
+                      handler: () => {
+                        // this.navCtrl.push(alternatePage); // this is optional(you can use only one button if maps is necessary) according to your needs if you want to navigate user to some other place if he does not give location access.
+                      }
+                    },
+                    {
+                      text: 'Go to settings',
+                      handler: () => {
+                        this.diagnostic.switchToLocationSettings()
+                      }
+                    }
+                  ]
+                });
+                confirm.present();
+              }
+              else {
+                this.sendLocationMsg();
+
+              }
+            })
             console.log('Archive clicked');
           }
         },
@@ -236,6 +270,30 @@ export class ChatsendPage {
 
     actionSheet.present();
   }
+
+
+  getProgressBar(percentaje){
+    let html: string = '<progress value="'+percentaje+'" max="100"></progress>';
+    return this.sanitizer.bypassSecurityTrustHtml(html);
+  }
+
+  presentLoading(){
+    let loader = this.loadingCtrl.create({
+      spinner: 'hide',
+    });
+    loader.present();
+
+    let counter: number = 0;
+    let interval = setInterval(() => {
+      loader.data.content = this.getProgressBar(counter);
+      counter++;
+      if (counter == 100) {
+        loader.dismiss();
+        clearInterval(interval);
+      }
+    }, 10);
+  }
+
 
   async forGroups() {
     if (localStorage.getItem('currentUser')) {
@@ -570,7 +628,10 @@ export class ChatsendPage {
         this.focus();
       }
     }).catch((error) => {
-      console.log('Error getting location', error);
+      console.error('Error getting location', error + "");
+      let toast = this.toastsAlertService.createToast('Error getting location'
+      );
+      toast.present();
     });
 
 
@@ -903,7 +964,7 @@ export class ChatsendPage {
       }
     ).then((info) => {
       this.loading = this.loadingCtrl.create({
-        content: 'Please wait...'
+        content: 'Getting video ready for upload.'
       });
       this.loading.present();
       this.getVideoInfoSuccess(info);
@@ -976,7 +1037,7 @@ export class ChatsendPage {
         }
       ).then((info) => {
         this.loading = this.loadingCtrl.create({
-          content: 'Please wait...'
+          content: 'Getting video ready for upload.'
         });
         this.loading.present();
         this.getVideoInfoSuccess(info);
@@ -1120,13 +1181,46 @@ export class ChatsendPage {
     };
 
 
-    this.loading_ = this.loadingCtrl.create({
-      content: 'Uploading...',
+    // this.loading_ = this.loadingCtrl.create({
+    //   content: 'Uploading...',
+    // });
+    // this.loading_.present();
+
+   this.loading_ = this.loadingCtrl.create({
+      spinner: 'hide',
     });
-    this.loading_.present();
+
+    fileTransfer.onProgress((e)=>
+    {
+      // let loader = this.loadingCtrl.create({
+      //   spinner: 'hide',
+      // });
+
+      let prg=(e.lengthComputable) ?  Math.round(e.loaded / e.total * 100) : -1;
+
+      this.loading_.data.content = this.getProgressBar(prg);
+      // counter++;
+      if (prg >= 100) {
+        if(this.loading_) {
+
+          this.loading_.dismiss();
+        }
+        // clearInterval(interval);
+      }
+      // let counter: number = 0;
+      // let interval = setInterval(() => {
+      //
+      //
+      // }, 10);
+    });
+
     // alert(targetPath)
+    this.loading_.present();
+
     fileTransfer.upload(targetPath, url, options).then((data: any) => {
-      this.loading_.dismissAll();
+      if(this.loading_) {
+        this.loading_.dismissAll();
+      }
       this.getGroups__();
       // alert(JSON.stringify(data));
 

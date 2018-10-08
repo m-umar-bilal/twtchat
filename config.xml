@@ -117,5 +117,6 @@
         <variable name="GEOLOCATION_USAGE_DESCRIPTION" value="To locate you" />
     </plugin>
     <plugin name="cordova-plugin-android-permissions" spec="^1.0.0" />
+    <plugin name="cordova.plugins.diagnostic" spec="^4.0.10" />
     <engine name="android" spec="7.0.0" />
 </widget>

@@ -63,7 +63,7 @@ export class SettingsPage {
   }
 
   logout() {
-    this.svc.userData = null;
+    this.svc.userData = undefined;
     localStorage.removeItem("currentUser");
     localStorage.removeItem("active");
     localStorage.removeItem("UserData");
