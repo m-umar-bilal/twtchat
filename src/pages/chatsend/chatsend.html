@@ -76,14 +76,16 @@
 
 
             <vg-player *ngIf="msg.local" style="border-radius: 5px;" vg-native-fullscreen="false">
-              <video width="100%" style="height: inherit" [vgMedia]="media" #media id="singleVideo{{msg.unicode_code}}" preload="auto"
+              <video width="100%" style="height: inherit" [vgMedia]="media" #media id="singleVideo{{msg.unicode_code}}"
+                     preload="auto"
                      controls>
                 <source [src]="msg.message" type="video/mp4">
 
               </video>
             </vg-player>
             <vg-player *ngIf="!msg.local" style="border-radius: 5px;" vg-native-fullscreen="false">
-              <video width="100%" style="height: inherit" [vgMedia]="media" #media id="singleVideo{{msg.unique_code}}" preload="auto"
+              <video width="100%" style="height: inherit" [vgMedia]="media" #media id="singleVideo{{msg.unique_code}}"
+                     preload="auto"
                      controls>
 
                 <source [src]="serverURL+msg?.directory+msg?.message" type="video/mp4">
@@ -133,39 +135,48 @@
 
 </ion-content>
 
-<ion-footer no-border [style.height]="showEmojiPicker ? '255px' : '55px'">
-  <div  *ngIf="recordingInput">
-
+<ion-footer no-border [style.height]="recordingInput ? '69px' : '55px'">
+  <div *ngIf="recordingInput">
 
 
     <!--<div data-role="footer" class="footer-audio" data-position="fixed" data-tap-toggle="false" data-hide-during-focus="" id="footer-audio">-->
-      <!--<button ion-button icon-only>-->
-    <ion-row >
+    <!--<button ion-button icon-only>-->
+    <ion-row style="font-weight: bold" (tap)="closeAudio()">
       <!--<button ion-button color="danger" outline icon-only>-->
-        <ion-icon name='close' style="padding: 2px" is-active="false"></ion-icon>
-        Record Audio
+      <ion-icon large name='close' style="margin: 5px" is-active="false"></ion-icon>
+      <span style="margin: 5px">Record Audio</span>
       <!--</button>-->
 
     </ion-row>
     <ion-row>
       <ion-col>
         <div item-left>
-          <button ion-button icon-only small round>
-            <ion-icon name="play"></ion-icon>
+          <button ion-button icon-only [disabled]="recording||!this.curr_playing_file||!this.curr_playing_file" (tap)="playAudio_()" small round>
+            <ion-icon name="play" ></ion-icon>
           </button>
-          <button ion-button icon-only small round>
+          <button ion-button icon-only small round (tap)="pressed()" *ngIf="!recording">
             <ion-icon name="mic"></ion-icon>
+          </button>
+          <button ion-button icon-only small round (tap)="released()" *ngIf="recording">
+            <ion-icon name="md-pause"></ion-icon>
           </button>
         </div>
       </ion-col>
-      <ion-col style="text-align: center">
-        00:00
+      <ion-col text-center padding-vertical>
+        <span *ngIf="recording&&this.timeDuration||this.curr_playing_file&&this.timeDuration">
+        {{this.timeDuration}}</span>
+        <span *ngIf="!recording&&!this.timeDuration||!this.curr_playing_file&&!this.timeDuration">
+          00:00</span>
       </ion-col>
       <ion-col>
-          <button style="float: right" ion-button icon-only small round>
+        <button [disabled]="recording||!this.curr_playing_file" (tap)="uploadReleasedAudio()" style="float: right"
+                ion-button icon-only small round>
           <ion-icon name="send"></ion-icon>
         </button>
       </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-label>&nbsp;</ion-label>
     </ion-row>
 
 
@@ -173,10 +184,10 @@
     <!--<ion-card-content>-->
     <!--<ion-card-title>-->
     <!--<button ion-button primary (tap)="released()" *ngIf="recording">-->
-      <!--<ion-icon name="mic-off"></ion-icon>&nbsp;&nbsp;Stop Record-->
+    <!--<ion-icon name="mic-off"></ion-icon>&nbsp;&nbsp;Stop Record-->
     <!--</button>-->
     <!--<button ion-button primary (tap)="pressed()" *ngIf="!recording">-->
-      <!--<ion-icon name="mic"></ion-icon>&nbsp;&nbsp;Start Record-->
+    <!--<ion-icon name="mic"></ion-icon>&nbsp;&nbsp;Start Record-->
     <!--</button>-->
     <!--</ion-card-title>-->
     <!--</ion-card-content>-->

@@ -13,6 +13,12 @@ page-chatsend {
   ion-content .scroll-content {
     background: transparent;
   }
+  .vertical-align-content > *
+  {
+    display: flex!important;
+    align-content: center!important;
+    align-items: center!important;
+  }
 
   ion-footer {
     box-shadow: 0 0 4px rgba(0, 0, 0, 0.11);

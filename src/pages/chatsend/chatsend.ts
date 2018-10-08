@@ -25,6 +25,8 @@ import {Geolocation} from '@ionic-native/geolocation';
 import {AndroidPermissions} from "@ionic-native/android-permissions";
 import {platformBrowserDynamic} from "@angular/platform-browser-dynamic";
 import {Diagnostic} from '@ionic-native/diagnostic';
+import {Observable} from "rxjs/Observable";
+import {Subscription} from "rxjs/Subscription";
 
 declare let cordova: any;
 const MEDIA_FILES_KEY = 'mediaFiles';
@@ -57,6 +59,7 @@ const MEDIA_FILES_KEY = 'mediaFiles';
 export class ChatsendPage {
 
   mediaFiles = [];
+  timeDuration;
   @ViewChild('content') content: Content;
   @ViewChild('chat_input') messageInput: ElementRef;
   editorMsg = '';
@@ -93,6 +96,8 @@ export class ChatsendPage {
   recStart: boolean = false;
   private curfilename: string;
   private dcoumentId: string;
+  private startTime: Date;
+  private audioObs: Subscription;
 
 
   constructor(public navParams: NavParams, public navCtrl: NavController,
@@ -108,7 +113,6 @@ export class ChatsendPage {
               private androidPermissions: AndroidPermissions,
               private alertCtrl: AlertController,
               private diagnostic: Diagnostic
-
   ) {
 
     if (localStorage.getItem('wallimg' + this.currentUser.user_id)) {
@@ -272,12 +276,12 @@ export class ChatsendPage {
   }
 
 
-  getProgressBar(percentaje){
-    let html: string = '<progress value="'+percentaje+'" max="100"></progress>';
+  getProgressBar(percentaje) {
+    let html: string = '<progress value="' + percentaje + '" max="100"></progress>';
     return this.sanitizer.bypassSecurityTrustHtml(html);
   }
 
-  presentLoading(){
+  presentLoading() {
     let loader = this.loadingCtrl.create({
       spinner: 'hide',
     });
@@ -1186,22 +1190,21 @@ export class ChatsendPage {
     // });
     // this.loading_.present();
 
-   this.loading_ = this.loadingCtrl.create({
+    this.loading_ = this.loadingCtrl.create({
       spinner: 'hide',
     });
 
-    fileTransfer.onProgress((e)=>
-    {
+    fileTransfer.onProgress((e) => {
       // let loader = this.loadingCtrl.create({
       //   spinner: 'hide',
       // });
 
-      let prg=(e.lengthComputable) ?  Math.round(e.loaded / e.total * 100) : -1;
+      let prg = (e.lengthComputable) ? Math.round(e.loaded / e.total * 100) : -1;
 
       this.loading_.data.content = this.getProgressBar(prg);
       // counter++;
       if (prg >= 100) {
-        if(this.loading_) {
+        if (this.loading_) {
 
           this.loading_.dismiss();
         }
@@ -1218,7 +1221,7 @@ export class ChatsendPage {
     this.loading_.present();
 
     fileTransfer.upload(targetPath, url, options).then((data: any) => {
-      if(this.loading_) {
+      if (this.loading_) {
         this.loading_.dismissAll();
       }
       this.getGroups__();
@@ -1645,6 +1648,7 @@ export class ChatsendPage {
 
   pressed() {
 
+    this.timeDuration =undefined;
 
     if (this.platform.is('android')) {
 
@@ -1668,7 +1672,16 @@ export class ChatsendPage {
         try {
           console.log('start Recording');
           if (this.recStart == false) {
+
             this.curr_playing_file.startRecord();
+            this.startTime = new Date();
+
+            this.audioObs = Observable.interval(1000)
+              .subscribe(() => {         //replaced function() by ()=>
+                // this.timeDuration = new Date();
+                this.timeDuration = this.fmtMSS((new Date().getTime() - this.startTime.getTime()) / 1000)
+                console.log(this.timeDuration); // just testing if it is working
+              });
             this.recStart = true;
           }
         } catch (e) {
@@ -1700,6 +1713,14 @@ export class ChatsendPage {
         console.log('start Recording');
         if (this.recStart == false) {
           this.curr_playing_file.startRecord();
+          this.startTime = new Date();
+
+          this.audioObs = Observable.interval(1000)
+            .subscribe(() => {         //replaced function() by ()=>
+              // this.timeDuration = new Date();
+              this.timeDuration = this.fmtMSS((new Date().getTime() - this.startTime.getTime()) / 1000)
+              console.log(this.timeDuration); // just testing if it is working
+            });
           this.recStart = true;
         }
       } catch (e) {
@@ -1815,13 +1836,47 @@ export class ChatsendPage {
 
     setTimeout(() => {
       try {
+
+        this.audioObs.unsubscribe();
+
+        this.curr_playing_file.stopRecord();
+        this.curr_playing_file.release();
+        this.recording = false;
+        this.recStart = false;
+
+        // this.timeDuration = this.fmtMSS(this.curr_playing_file.getDuration());
+
+
+
+
+        // this.recording = false;
+        // this.recordingInput = false;
+        // if (this.curr_playing_file) {
+        //   this.curr_playing_file.stopRecord();
+        //   this.curr_playing_file = undefined;
+        // }
+        // this.timeDuration = undefined;
+        // this.recStart = false;
+
+
+        // this.curr_playing_file.play();
+        console.log('released');
+      } catch (error) {
+        console.log('stoperror');
+        console.log(error.message);
+      }
+    }, 0);
+
+  }
+
+  uploadReleasedAudio() {
+
+    setTimeout(() => {
+      try {
         console.log('stop recording');
         //stop recording
 
         this.recording = false;
-        let name = 'record' + new Date().getDate() + new Date().getMonth() + new Date().getFullYear() + new Date().getHours() + new Date().getMinutes() + new Date().getSeconds() + '.m4a';
-        ;
-
         let url = this.serverURL + "messageFile.php";
         let type = "audio";
 
@@ -1892,8 +1947,8 @@ export class ChatsendPage {
         };
 
 
-        this.curr_playing_file.stopRecord();
-        this.curr_playing_file.release();
+        // this.curr_playing_file.stopRecord();
+        // this.curr_playing_file.release();
         // this.curr_playing_file.play();
         console.log('released');
 
@@ -1986,6 +2041,51 @@ export class ChatsendPage {
     this.audio.setVolume(0.8);
     return this.filePathA;
 
+  }
+
+
+  closeAudio() {
+    this.recording = false;
+    this.recordingInput = false;
+    if (this.curr_playing_file) {
+      this.curr_playing_file.stopRecord();
+      this.curr_playing_file = undefined;
+    }
+    this.timeDuration = undefined;
+    this.recStart = false;
+
+
+  }
+
+  fmtMSS(time)
+  {
+
+    // Hours, minutes and seconds
+    // var hrs = ~~(time / 3600);
+    // var mins = ~~((time % 3600) / 60);
+    // var secs = ~~time % 60;
+    //
+    // // Output like "1:01" or "4:03:59" or "123:03:59"
+    // var ret = "";
+    //
+    // if (hrs > 0) {
+    //   ret += "" + hrs + ":" + (mins < 10 ? "0" : "");
+    // }
+    //
+    // ret += "" + mins + ":" + (secs < 10 ? "0" : "");
+    // ret += "" + secs;
+    return new Date(time * 1000).toISOString().substr(11, 8);;
+  }
+
+  playAudio_() {
+    // this.curr_playing_file.stopRecord();
+    // this.curr_playing_file.release();
+
+    this.curr_playing_file.stop();
+
+    // this.timeDuration = this.fmtMSS(this.curr_playing_file.getDuration());
+    // this.audio.setVolume(0.8);
+    this.curr_playing_file.play();
   }
 
 
